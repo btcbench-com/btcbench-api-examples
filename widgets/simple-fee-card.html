@@ -5,23 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>BTCBench Bitcoin Fee Widget Example</title>
-  <meta name="description" content="A compact Bitcoin fee widget example using BTCBench public fee data with approximate USD transaction cost estimates.">
+  <meta name="description" content="Compact Bitcoin fee widget example using BTCBench public fee data with approximate USD transaction cost estimates.">
   <meta name="robots" content="index, follow">
 
   <style>
     :root {
-      --btc-orange: #f7931a;
-      --bg: #f3f6ff;
+      --bg: #f7f9ff;
       --card: #ffffff;
+      --card-soft: #f6f7ff;
+      --border: #dbe3f5;
+      --border-strong: #cbd7ff;
+
       --text: #111827;
-      --muted: #7b8495;
-      --soft-muted: #a8b0c2;
-      --border: #dfe5f2;
-      --blue: #4f46e5;
-      --green: #059669;
+      --muted: #6b7280;
+      --muted-light: #9aa5b8;
+
+      --purple: #6366f1;
+      --purple-soft: #eef0ff;
+      --purple-border: #b8c3ff;
+
+      --orange: #f7931a;
       --red: #dc2626;
-      --amber: #d97706;
-      --shadow: 0 14px 36px rgba(15, 23, 42, 0.10);
+      --blue: #4f46e5;
+      --cyan: #0e7490;
+      --green: #059669;
+      --green-soft: #d1fae5;
+      --green-border: #99f6e4;
+
+      --shadow: 0 16px 42px rgba(15, 23, 42, 0.10);
       --radius: 18px;
     }
 
@@ -34,8 +45,10 @@
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 20px;
-      background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+      padding: 18px;
+      background:
+        radial-gradient(circle at top left, rgba(99, 102, 241, 0.12), transparent 34%),
+        linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       line-height: 1.45;
@@ -52,28 +65,29 @@
 
     .fee-widget {
       background: var(--card);
-      border: 1px solid #cfd8ff;
-      border-top: 4px solid #6366f1;
+      border: 1px solid var(--border-strong);
+      border-top: 4px solid var(--purple);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
     }
 
     .widget-header {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 14px 18px;
-      border-bottom: 1px solid var(--border);
+      gap: 10px;
+      padding: 13px 18px;
       background: linear-gradient(180deg, #ffffff 0%, #f7f8ff 100%);
+      border-bottom: 1px solid var(--border);
     }
 
     .brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 10px;
       min-width: 0;
+      justify-self: start;
     }
 
     .brand-mark {
@@ -82,52 +96,53 @@
       border-radius: 10px;
       display: grid;
       place-items: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 55%, #f7931a 100%);
-      color: #fff;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 58%, #f7931a 100%);
+      color: #ffffff;
       font-size: 1.25rem;
-      font-weight: 900;
-      box-shadow: 0 6px 15px rgba(102, 126, 234, 0.35);
+      font-weight: 950;
+      box-shadow: 0 8px 18px rgba(99, 102, 241, 0.35);
       flex: 0 0 auto;
     }
 
     .brand-name {
-      font-size: 1.1rem;
-      font-weight: 900;
+      font-size: 1.08rem;
+      font-weight: 950;
       letter-spacing: -0.03em;
-      color: #111827;
       white-space: nowrap;
+      color: var(--text);
     }
 
     .center-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
       min-width: 116px;
+      text-align: center;
       padding: 6px 14px;
       border-radius: 999px;
-      border: 1px solid #b9c4ff;
-      background: #eef0ff;
+      border: 1px solid var(--purple-border);
+      background: var(--purple-soft);
       color: #6b7280;
-      font-size: 0.82rem;
-      font-weight: 900;
+      font-size: 0.8rem;
+      font-weight: 950;
       letter-spacing: 0.12em;
       text-transform: uppercase;
+      justify-self: center;
     }
 
     .status-pill {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 7px;
       padding: 7px 12px;
       border-radius: 999px;
-      background: #d1fae5;
-      border: 1px solid #99f6e4;
+      background: var(--green-soft);
+      border: 1px solid var(--green-border);
       color: #064e3b;
       font-size: 0.78rem;
-      font-weight: 900;
+      font-weight: 950;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       white-space: nowrap;
+      justify-self: end;
     }
 
     .status-dot {
@@ -154,6 +169,7 @@
       0%, 100% {
         box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45);
       }
+
       50% {
         box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
       }
@@ -167,11 +183,12 @@
 
     .fee-row {
       display: grid;
-      grid-template-columns: 1fr auto auto;
+      grid-template-columns: minmax(0, 1fr) auto auto;
       gap: 12px;
       align-items: center;
       padding: 14px 18px;
       border-bottom: 1px solid #eef2f7;
+      background: #ffffff;
     }
 
     .fee-row:last-child {
@@ -183,30 +200,30 @@
     }
 
     .fee-name {
-      font-size: 0.95rem;
-      font-weight: 900;
-      letter-spacing: 0.06em;
+      font-size: 0.92rem;
+      font-weight: 950;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
-      line-height: 1.2;
+      line-height: 1.15;
     }
 
     .fee-name.fastest {
-      color: #4f46e5;
+      color: var(--blue);
     }
 
     .fee-name.normal {
-      color: #0e7490;
+      color: var(--cyan);
     }
 
     .fee-name.economy {
-      color: #047857;
+      color: var(--green);
     }
 
     .fee-help {
-      margin-top: 2px;
-      color: var(--soft-muted);
+      margin-top: 3px;
+      color: var(--muted-light);
       font-size: 0.78rem;
-      font-weight: 700;
+      font-weight: 750;
     }
 
     .fee-number {
@@ -221,7 +238,7 @@
       font-size: 1.35rem;
       line-height: 1;
       font-weight: 950;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.045em;
     }
 
     .fee-number .unit {
@@ -230,33 +247,33 @@
       font-weight: 900;
     }
 
-    .usd-pill {
-      min-width: 70px;
-      text-align: center;
-      padding: 6px 8px;
-      border-radius: 8px;
-      background: #f4f6fb;
-      color: #6b7280;
-      font-size: 0.9rem;
-      font-weight: 900;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-
     .fastest-value strong {
       color: var(--red);
     }
 
     .normal-value strong {
-      color: var(--amber);
+      color: var(--orange);
     }
 
     .economy-value strong {
       color: var(--green);
     }
 
+    .usd-pill {
+      min-width: 72px;
+      text-align: center;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: #f4f6fb;
+      color: #6b7280;
+      font-size: 0.9rem;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
     .widget-footer {
-      padding: 13px 18px;
+      padding: 13px 18px 14px;
       background: #f4f5ff;
       border-top: 1px solid var(--border);
     }
@@ -267,7 +284,7 @@
       gap: 7px;
       color: #4b5563;
       font-size: 0.86rem;
-      font-weight: 800;
+      font-weight: 900;
       margin-bottom: 4px;
     }
 
@@ -287,7 +304,7 @@
 
     .footer-line a {
       color: #7c86a2;
-      font-weight: 800;
+      font-weight: 850;
     }
 
     .error-message {
@@ -299,7 +316,44 @@
       border: 1px solid #fecaca;
       color: #991b1b;
       font-size: 0.82rem;
-      font-weight: 700;
+      font-weight: 800;
+    }
+
+    .widget-links {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 12px 18px 16px;
+      background: #ffffff;
+      border-top: 1px solid #eef2f7;
+    }
+
+    .widget-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: #374151;
+      font-size: 0.78rem;
+      font-weight: 950;
+      text-align: center;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .widget-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+      border-color: #cbd5e1;
+    }
+
+    .widget-link.primary {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: #111827;
     }
 
     .below-note {
@@ -309,30 +363,41 @@
       text-align: center;
     }
 
-    @media (max-width: 420px) {
+    @media (max-width: 440px) {
       body {
         padding: 10px;
       }
 
       .widget-header {
-        gap: 8px;
+        grid-template-columns: 1fr auto;
         padding: 12px;
-      }
-
-      .brand-name {
-        font-size: 1rem;
       }
 
       .center-pill {
         display: none;
       }
 
+      .brand-name {
+        font-size: 1rem;
+      }
+
       .fee-row {
-        grid-template-columns: 1fr auto;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        gap: 8px;
+        padding: 13px 14px;
       }
 
       .usd-pill {
-        grid-column: 2;
+        min-width: 64px;
+        font-size: 0.82rem;
+      }
+
+      .widget-links {
+        grid-template-columns: 1fr;
+      }
+
+      .widget-link {
+        width: 100%;
       }
     }
   </style>
@@ -350,8 +415,8 @@
         <div class="center-pill" aria-hidden="true">BTC Fees</div>
 
         <div class="status-pill" id="status-pill">
-          <span>Live</span>
-          <span class="status-dot" id="status-dot" aria-hidden="true"></span>
+          <span id="status-text">Live</span>
+          <span class="status-dot" aria-hidden="true"></span>
         </div>
       </header>
 
@@ -408,6 +473,12 @@
           Could not load BTCBench fee data right now.
         </div>
       </footer>
+
+      <nav class="widget-links" aria-label="BTCBench widget links">
+        <a class="widget-link primary" href="https://www.btcbench.com/" target="_blank" rel="noopener noreferrer">BTCBench</a>
+        <a class="widget-link" href="https://www.btcbench.com/api-docs.html" target="_blank" rel="noopener noreferrer">API Docs</a>
+        <a class="widget-link" href="https://www.btcbench.com/embed.html" target="_blank" rel="noopener noreferrer">Embed</a>
+      </nav>
     </section>
 
     <p class="below-note">
@@ -434,15 +505,16 @@
       const freshnessTextEl = document.getElementById("freshness-text");
       const datetimeLineEl = document.getElementById("datetime-line");
       const statusPillEl = document.getElementById("status-pill");
+      const statusTextEl = document.getElementById("status-text");
       const errorEl = document.getElementById("error-message");
 
       function setStatus(isOk) {
         if (isOk) {
           statusPillEl.classList.remove("error");
-          statusPillEl.innerHTML = '<span>Live</span><span class="status-dot" aria-hidden="true"></span>';
+          statusTextEl.textContent = "Live";
         } else {
           statusPillEl.classList.add("error");
-          statusPillEl.innerHTML = '<span>Error</span><span class="status-dot" aria-hidden="true"></span>';
+          statusTextEl.textContent = "Error";
         }
       }
 
@@ -470,18 +542,6 @@
         return Number.isNaN(date.getTime()) ? null : date;
       }
 
-      function formatDate(date) {
-        if (!date) return "Latest BTCBench snapshot";
-
-        return date.toLocaleString(undefined, {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit"
-        });
-      }
-
       function formatUtcDate(date) {
         if (!date) return "Latest BTCBench snapshot";
 
@@ -507,7 +567,11 @@
         if (diffMin < 60) return "Updated " + diffMin + " min ago";
 
         const diffHours = Math.round(diffMin / 60);
-        if (diffHours === 1) return "Updated 1 hour ago";
+
+        if (diffHours === 1) {
+          return "Updated 1 hour ago";
+        }
+
         return "Updated " + diffHours + " hours ago";
       }
 
