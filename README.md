@@ -22,6 +22,21 @@ BTCBench is an independent Bitcoin fee monitoring and benchmarking service. It h
 - Fee calculator and chart pages
 - Daily, weekly, and monthly report archives
 - Machine-readable data for tools and AI discovery
+  
+  ## Repository Structure
+
+- `docs/endpoints.md` — BTCBench API endpoint documentation and useful links
+- `examples/javascript/current-fees.html` — simple browser example using the BTCBench API
+- `examples/python/current-fees.py` — simple Python example using the BTCBench API
+- `widgets/simple-fee-card.html` — simple embeddable Bitcoin fee card example
+
+## Widget Example
+
+The `widgets/simple-fee-card.html` file shows how a website owner can display a small Bitcoin fee card using BTCBench API data.
+
+For production use, review the BTCBench API documentation:
+
+https://www.btcbench.com/api-docs.html
 
 ## Example Use Cases
 
