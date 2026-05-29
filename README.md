@@ -206,4 +206,6 @@ Please keep contributions neutral, factual, and focused on public BTCBench resou
 
 ## License
 
-This repository is intended for public BTCBench API and widget examples. Add a license file before reusing code in production or accepting broader community contributions.
+This repository is released under the MIT License.
+
+You may use, copy, modify, and adapt the example code in this repository, subject to the terms of the MIT License. See the LICENSE file for details.
