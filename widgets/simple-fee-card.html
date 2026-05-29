@@ -1,27 +1,27 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Simple Bitcoin Fee Card Example | BTCBench</title>
-  <meta name="description" content="A simple embeddable Bitcoin fee card example using the public BTCBench Bitcoin fee API.">
+  <title>BTCBench Bitcoin Fee Widget Example</title>
+  <meta name="description" content="A compact Bitcoin fee widget example using BTCBench public fee data with approximate USD transaction cost estimates.">
   <meta name="robots" content="index, follow">
 
   <style>
     :root {
       --btc-orange: #f7931a;
-      --btc-orange-dark: #d97706;
-      --bg: #f8fafc;
+      --bg: #f3f6ff;
       --card: #ffffff;
       --text: #111827;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --success: #059669;
-      --warning: #d97706;
-      --danger: #dc2626;
-      --shadow: 0 12px 30px rgba(15, 23, 42, 0.10);
+      --muted: #7b8495;
+      --soft-muted: #a8b0c2;
+      --border: #dfe5f2;
+      --blue: #4f46e5;
+      --green: #059669;
+      --red: #dc2626;
+      --amber: #d97706;
+      --shadow: 0 14px 36px rgba(15, 23, 42, 0.10);
       --radius: 18px;
     }
 
@@ -34,56 +34,39 @@
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 24px;
-      background:
-        radial-gradient(circle at top left, rgba(247, 147, 26, 0.13), transparent 34%),
-        linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+      padding: 20px;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
     a {
       color: inherit;
+      text-decoration: none;
     }
 
-    .page-wrap {
-      width: min(460px, 100%);
+    .widget-wrap {
+      width: min(448px, 100%);
     }
 
-    .intro {
-      text-align: center;
-      margin-bottom: 16px;
-    }
-
-    .intro h1 {
-      margin: 0 0 8px;
-      font-size: 1.35rem;
-      letter-spacing: -0.02em;
-    }
-
-    .intro p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.94rem;
-    }
-
-    .fee-card {
+    .fee-widget {
       background: var(--card);
-      border: 1px solid var(--border);
+      border: 1px solid #cfd8ff;
+      border-top: 4px solid #6366f1;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
     }
 
-    .fee-card-header {
-      padding: 18px 20px;
-      background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
-      color: #ffffff;
+    .widget-header {
       display: flex;
-      justify-content: space-between;
-      gap: 14px;
       align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff 0%, #f7f8ff 100%);
     }
 
     .brand {
@@ -94,44 +77,56 @@
     }
 
     .brand-mark {
-      width: 38px;
-      height: 38px;
-      border-radius: 11px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 55%, #f7931a 100%);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       display: grid;
       place-items: center;
-      color: #ffffff;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 55%, #f7931a 100%);
+      color: #fff;
+      font-size: 1.25rem;
       font-weight: 900;
+      box-shadow: 0 6px 15px rgba(102, 126, 234, 0.35);
       flex: 0 0 auto;
     }
 
-    .brand-text {
-      min-width: 0;
+    .brand-name {
+      font-size: 1.1rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #111827;
+      white-space: nowrap;
     }
 
-    .brand-title {
-      font-weight: 800;
-      font-size: 1rem;
-      line-height: 1.2;
-    }
-
-    .brand-subtitle {
-      color: rgba(255, 255, 255, 0.72);
-      font-size: 0.78rem;
-      margin-top: 2px;
+    .center-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 116px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid #b9c4ff;
+      background: #eef0ff;
+      color: #6b7280;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
     }
 
     .status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
+      gap: 7px;
+      padding: 7px 12px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      color: rgba(255, 255, 255, 0.9);
+      background: #d1fae5;
+      border: 1px solid #99f6e4;
+      color: #064e3b;
       font-size: 0.78rem;
-      font-weight: 700;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       white-space: nowrap;
     }
 
@@ -139,17 +134,20 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #9ca3af;
-      box-shadow: 0 0 0 0 rgba(156, 163, 175, 0.5);
-    }
-
-    .status-dot.ok {
       background: #10b981;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45);
       animation: pulse 2s infinite;
     }
 
-    .status-dot.error {
+    .status-pill.error {
+      background: #fee2e2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .status-pill.error .status-dot {
       background: #ef4444;
+      animation: none;
     }
 
     @keyframes pulse {
@@ -161,407 +159,428 @@
       }
     }
 
-    .fee-card-body {
-      padding: 20px;
-    }
-
-    .fee-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
+    .fee-list {
+      padding: 0;
+      margin: 0;
+      list-style: none;
     }
 
     .fee-row {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
       align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 14px 16px;
-      background: #f9fafb;
-      border: 1px solid var(--border);
-      border-radius: 14px;
+      padding: 14px 18px;
+      border-bottom: 1px solid #eef2f7;
+    }
+
+    .fee-row:last-child {
+      border-bottom: none;
     }
 
     .fee-label {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+      min-width: 0;
     }
 
     .fee-name {
-      font-weight: 800;
-      color: var(--text);
       font-size: 0.95rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    .fee-name.fastest {
+      color: #4f46e5;
+    }
+
+    .fee-name.normal {
+      color: #0e7490;
+    }
+
+    .fee-name.economy {
+      color: #047857;
     }
 
     .fee-help {
-      color: var(--muted);
+      margin-top: 2px;
+      color: var(--soft-muted);
       font-size: 0.78rem;
+      font-weight: 700;
     }
 
-    .fee-value {
-      font-size: 1.45rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
+    .fee-number {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
     }
 
-    .fee-value.fast {
-      color: var(--danger);
+    .fee-number strong {
+      font-size: 1.35rem;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -0.04em;
     }
 
-    .fee-value.normal {
-      color: var(--warning);
-    }
-
-    .fee-value.economy {
-      color: var(--success);
-    }
-
-    .unit {
+    .fee-number .unit {
+      color: #7b8495;
       font-size: 0.78rem;
-      color: var(--muted);
-      font-weight: 700;
-      margin-left: 2px;
+      font-weight: 900;
     }
 
-    .meta {
-      margin-top: 14px;
-      padding: 12px 14px;
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      border-radius: 14px;
-      color: #78350f;
-      font-size: 0.83rem;
-    }
-
-    .meta strong {
-      color: #92400e;
-    }
-
-    .links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .link-button {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 38px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #ffffff;
-      color: #374151;
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 0.82rem;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .link-button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
-      text-decoration: none;
-    }
-
-    .link-button.primary {
-      background: var(--btc-orange);
-      border-color: var(--btc-orange);
-      color: #111827;
-    }
-
-    .footer-note {
-      margin-top: 14px;
-      color: var(--muted);
+    .usd-pill {
+      min-width: 70px;
       text-align: center;
-      font-size: 0.78rem;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: #f4f6fb;
+      color: #6b7280;
+      font-size: 0.9rem;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
     }
 
-    .footer-note a {
-      color: var(--btc-orange-dark);
+    .fastest-value strong {
+      color: var(--red);
+    }
+
+    .normal-value strong {
+      color: var(--amber);
+    }
+
+    .economy-value strong {
+      color: var(--green);
+    }
+
+    .widget-footer {
+      padding: 13px 18px;
+      background: #f4f5ff;
+      border-top: 1px solid var(--border);
+    }
+
+    .freshness {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #4b5563;
+      font-size: 0.86rem;
       font-weight: 800;
-      text-decoration: none;
+      margin-bottom: 4px;
     }
 
-    .footer-note a:hover {
-      text-decoration: underline;
+    .freshness-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      flex: 0 0 auto;
+    }
+
+    .footer-line {
+      color: #9aa3b5;
+      font-size: 0.76rem;
+      line-height: 1.45;
+    }
+
+    .footer-line a {
+      color: #7c86a2;
+      font-weight: 800;
     }
 
     .error-message {
       display: none;
-      margin-top: 12px;
-      padding: 12px 14px;
-      border-radius: 14px;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
       background: #fef2f2;
       border: 1px solid #fecaca;
       color: #991b1b;
-      font-size: 0.86rem;
+      font-size: 0.82rem;
+      font-weight: 700;
     }
 
-    .loading {
-      color: var(--muted);
+    .below-note {
+      margin: 12px 8px 0;
+      color: #6b7280;
+      font-size: 0.78rem;
+      text-align: center;
     }
 
     @media (max-width: 420px) {
       body {
-        padding: 14px;
+        padding: 10px;
       }
 
-      .fee-card-header {
-        align-items: flex-start;
-        flex-direction: column;
+      .widget-header {
+        gap: 8px;
+        padding: 12px;
+      }
+
+      .brand-name {
+        font-size: 1rem;
+      }
+
+      .center-pill {
+        display: none;
       }
 
       .fee-row {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 8px;
+        grid-template-columns: 1fr auto;
       }
 
-      .fee-value {
-        font-size: 1.6rem;
-      }
-
-      .links {
-        flex-direction: column;
-      }
-
-      .link-button {
-        width: 100%;
+      .usd-pill {
+        grid-column: 2;
       }
     }
   </style>
-
 </head>
 
 <body>
-  <main class="page-wrap">
-    <section class="intro" aria-labelledby="page-title">
-      <h1 id="page-title">Simple Bitcoin Fee Card</h1>
-      <p>Example widget using the public BTCBench Bitcoin fee API.</p>
+  <main class="widget-wrap">
+    <section class="fee-widget" aria-label="BTCBench Bitcoin fee widget">
+      <header class="widget-header">
+        <a class="brand" href="https://www.btcbench.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit BTCBench">
+          <span class="brand-mark">B</span>
+          <span class="brand-name">BTCBench</span>
+        </a>
+
+        <div class="center-pill" aria-hidden="true">BTC Fees</div>
+
+        <div class="status-pill" id="status-pill">
+          <span>Live</span>
+          <span class="status-dot" id="status-dot" aria-hidden="true"></span>
+        </div>
+      </header>
+
+      <ul class="fee-list">
+        <li class="fee-row">
+          <div class="fee-label">
+            <div class="fee-name fastest">Fastest</div>
+            <div class="fee-help">~10 min confirm</div>
+          </div>
+          <div class="fee-number fastest-value">
+            <strong id="fastest-fee">—</strong><span class="unit">sat/vB</span>
+          </div>
+          <div class="usd-pill" id="fastest-usd">~$—</div>
+        </li>
+
+        <li class="fee-row">
+          <div class="fee-label">
+            <div class="fee-name normal">Normal</div>
+            <div class="fee-help">~30 min confirm</div>
+          </div>
+          <div class="fee-number normal-value">
+            <strong id="normal-fee">—</strong><span class="unit">sat/vB</span>
+          </div>
+          <div class="usd-pill" id="normal-usd">~$—</div>
+        </li>
+
+        <li class="fee-row">
+          <div class="fee-label">
+            <div class="fee-name economy">Economy</div>
+            <div class="fee-help">low-priority fee</div>
+          </div>
+          <div class="fee-number economy-value">
+            <strong id="economy-fee">—</strong><span class="unit">sat/vB</span>
+          </div>
+          <div class="usd-pill" id="economy-usd">~$—</div>
+        </li>
+      </ul>
+
+      <footer class="widget-footer">
+        <div class="freshness">
+          <span class="freshness-dot" aria-hidden="true"></span>
+          <span id="freshness-text">Loading BTCBench data…</span>
+        </div>
+
+        <div class="footer-line" id="datetime-line">—</div>
+        <div class="footer-line">
+          Powered by <a href="https://www.btcbench.com/" target="_blank" rel="noopener noreferrer">BTCBench</a> · Independent
+        </div>
+        <div class="footer-line">
+          Fees via mempool.space · BTC/USD via CoinGecko
+        </div>
+
+        <div class="error-message" id="error-message">
+          Could not load BTCBench fee data right now.
+        </div>
+      </footer>
     </section>
 
-
-<section class="fee-card" aria-label="BTCBench Bitcoin fee card">
-  <div class="fee-card-header">
-    <div class="brand">
-      <div class="brand-mark" aria-hidden="true">B</div>
-      <div class="brand-text">
-        <div class="brand-title">BTCBench Fee Snapshot</div>
-        <div class="brand-subtitle">Live Bitcoin transaction fee example</div>
-      </div>
-    </div>
-
-    <div class="status-pill" id="status-pill">
-      <span class="status-dot" id="status-dot" aria-hidden="true"></span>
-      <span id="status-text">Loading</span>
-    </div>
-  </div>
-
-  <div class="fee-card-body">
-    <div class="fee-grid">
-      <div class="fee-row">
-        <div class="fee-label">
-          <span class="fee-name">Fastest</span>
-          <span class="fee-help">Higher-priority estimate</span>
-        </div>
-        <div class="fee-value fast">
-          <span id="fastest-fee" class="loading">—</span><span class="unit">sat/vB</span>
-        </div>
-      </div>
-
-      <div class="fee-row">
-        <div class="fee-label">
-          <span class="fee-name">Normal</span>
-          <span class="fee-help">Typical confirmation target</span>
-        </div>
-        <div class="fee-value normal">
-          <span id="normal-fee" class="loading">—</span><span class="unit">sat/vB</span>
-        </div>
-      </div>
-
-      <div class="fee-row">
-        <div class="fee-label">
-          <span class="fee-name">Economy</span>
-          <span class="fee-help">Lower-priority estimate</span>
-        </div>
-        <div class="fee-value economy">
-          <span id="economy-fee" class="loading">—</span><span class="unit">sat/vB</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="meta">
-      <strong>Updated:</strong> <span id="updated-time">Loading latest BTCBench data…</span>
-    </div>
-
-    <div class="error-message" id="error-message">
-      Could not load BTCBench fee data right now. Please try again later or check the BTCBench status page.
-    </div>
-
-    <div class="links" aria-label="BTCBench links">
-      <a class="link-button primary" href="https://www.btcbench.com/" target="_blank" rel="noopener noreferrer">
-        View BTCBench
-      </a>
-      <a class="link-button" href="https://www.btcbench.com/api-docs.html" target="_blank" rel="noopener noreferrer">
-        API Docs
-      </a>
-      <a class="link-button" href="https://www.btcbench.com/embed.html" target="_blank" rel="noopener noreferrer">
-        Embed Widgets
-      </a>
-    </div>
-  </div>
-</section>
-
-<p class="footer-note">
-  Data is provided for informational purposes only. Always verify final transaction fees in your own wallet.
-  Example code released under the repository <a href="../LICENSE">MIT License</a>.
-</p>
-
-
+    <p class="below-note">
+      Informational estimate only. USD values assume a 140 vbyte transaction. Always verify fees in your own wallet.
+    </p>
   </main>
 
   <script>
-  (function () {
-    "use strict";
+    (function () {
+      "use strict";
 
-    const API_URL = "https://www.btcbench.com/api/v1/fees.json";
-    const REFRESH_MS = 60000;
+      const API_URL = "https://www.btcbench.com/api/v1/fees.json";
+      const REFRESH_MS = 60000;
+      const DEFAULT_TX_VBYTES = 140;
 
-    const fastestEl = document.getElementById("fastest-fee");
-    const normalEl = document.getElementById("normal-fee");
-    const economyEl = document.getElementById("economy-fee");
-    const updatedEl = document.getElementById("updated-time");
-    const statusDotEl = document.getElementById("status-dot");
-    const statusTextEl = document.getElementById("status-text");
-    const errorEl = document.getElementById("error-message");
+      const fastestFeeEl = document.getElementById("fastest-fee");
+      const normalFeeEl = document.getElementById("normal-fee");
+      const economyFeeEl = document.getElementById("economy-fee");
 
-    function setStatus(status, message) {
-      statusDotEl.className = "status-dot " + status;
-      statusTextEl.textContent = message;
-    }
+      const fastestUsdEl = document.getElementById("fastest-usd");
+      const normalUsdEl = document.getElementById("normal-usd");
+      const economyUsdEl = document.getElementById("economy-usd");
 
-    function setLoading() {
-      setStatus("", "Loading");
-      errorEl.style.display = "none";
-    }
+      const freshnessTextEl = document.getElementById("freshness-text");
+      const datetimeLineEl = document.getElementById("datetime-line");
+      const statusPillEl = document.getElementById("status-pill");
+      const errorEl = document.getElementById("error-message");
 
-    function setError() {
-      setStatus("error", "Unavailable");
-      errorEl.style.display = "block";
-      updatedEl.textContent = "Unable to refresh data.";
-    }
-
-    function formatTimestamp(data) {
-      const rawDate =
-        data.datetime ||
-        data.btc_price_fetched_at ||
-        data.updated_at ||
-        data.timestamp ||
-        data.last_updated ||
-        null;
-
-      if (!rawDate) {
-        return "Latest public BTCBench snapshot";
+      function setStatus(isOk) {
+        if (isOk) {
+          statusPillEl.classList.remove("error");
+          statusPillEl.innerHTML = '<span>Live</span><span class="status-dot" aria-hidden="true"></span>';
+        } else {
+          statusPillEl.classList.add("error");
+          statusPillEl.innerHTML = '<span>Error</span><span class="status-dot" aria-hidden="true"></span>';
+        }
       }
 
-      let date;
+      function parseDate(data) {
+        const rawDate =
+          data.datetime ||
+          data.btc_price_fetched_at ||
+          data.updated_at ||
+          data.timestamp ||
+          null;
 
-      if (typeof rawDate === "number") {
-        date = new Date(rawDate * 1000);
-      } else {
+        if (!rawDate) return null;
+
+        if (typeof rawDate === "number") {
+          return new Date(rawDate * 1000);
+        }
+
         const rawDateString = String(rawDate).trim();
-
         const normalizedDate = rawDateString.includes("T")
           ? rawDateString
           : rawDateString.replace(" ", "T") + "Z";
 
-        date = new Date(normalizedDate);
+        const date = new Date(normalizedDate);
+
+        return Number.isNaN(date.getTime()) ? null : date;
       }
 
-      if (Number.isNaN(date.getTime())) {
-        return "Latest public BTCBench snapshot";
-      }
+      function formatDate(date) {
+        if (!date) return "Latest BTCBench snapshot";
 
-      return date.toLocaleString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-    }
-
-    function getFeeValue(data, path) {
-      const parts = path.split(".");
-      let value = data;
-
-      for (const part of parts) {
-        if (!value || value[part] === undefined || value[part] === null) {
-          return "N/A";
-        }
-
-        value = value[part];
-      }
-
-      return value;
-    }
-
-    function renderData(data) {
-      if (!data || !data.fees) {
-        throw new Error("Invalid BTCBench API response: missing fees object");
-      }
-
-      const fastest = getFeeValue(data, "fees.fastest");
-      const normal = getFeeValue(data, "fees.halfHour");
-      const economy = getFeeValue(data, "fees.economy");
-
-      fastestEl.textContent = fastest;
-      normalEl.textContent = normal;
-      economyEl.textContent = economy;
-
-      fastestEl.classList.remove("loading");
-      normalEl.classList.remove("loading");
-      economyEl.classList.remove("loading");
-
-      updatedEl.textContent = formatTimestamp(data);
-      errorEl.style.display = "none";
-      setStatus("ok", "Live");
-    }
-
-    async function loadFees() {
-      try {
-        setLoading();
-
-        const response = await fetch(API_URL, {
-          cache: "no-store"
+        return date.toLocaleString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
         });
+      }
 
-        if (!response.ok) {
-          throw new Error("HTTP " + response.status);
+      function formatUtcDate(date) {
+        if (!date) return "Latest BTCBench snapshot";
+
+        return date.toLocaleString(undefined, {
+          timeZone: "UTC",
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZoneName: "short"
+        });
+      }
+
+      function minutesAgo(date) {
+        if (!date) return "Updated recently";
+
+        const diffMs = Date.now() - date.getTime();
+        const diffMin = Math.max(0, Math.round(diffMs / 60000));
+
+        if (diffMin < 1) return "Updated just now";
+        if (diffMin === 1) return "Updated 1 min ago";
+        if (diffMin < 60) return "Updated " + diffMin + " min ago";
+
+        const diffHours = Math.round(diffMin / 60);
+        if (diffHours === 1) return "Updated 1 hour ago";
+        return "Updated " + diffHours + " hours ago";
+      }
+
+      function feeToUsd(feeRateSatPerVb, btcUsdPrice) {
+        const feeNumber = Number(feeRateSatPerVb);
+        const priceNumber = Number(btcUsdPrice);
+
+        if (!Number.isFinite(feeNumber) || !Number.isFinite(priceNumber)) {
+          return "~$—";
         }
 
-        const data = await response.json();
-        renderData(data);
-      } catch (error) {
-        console.error("BTCBench fee widget error:", error);
-        setError();
-      }
-    }
+        const sats = feeNumber * DEFAULT_TX_VBYTES;
+        const usd = (sats / 100000000) * priceNumber;
 
-    loadFees();
-
-    window.setInterval(function () {
-      if (document.visibilityState === "visible") {
-        loadFees();
+        return "~$" + usd.toFixed(2);
       }
-    }, REFRESH_MS);
-  })();
-</script>
+
+      function renderData(data) {
+        if (!data || !data.fees) {
+          throw new Error("Invalid BTCBench API response");
+        }
+
+        const fastest = data.fees.fastest;
+        const normal = data.fees.halfHour;
+        const economy = data.fees.economy;
+        const btcPriceUsd = data.btc_price_usd;
+
+        fastestFeeEl.textContent = fastest ?? "N/A";
+        normalFeeEl.textContent = normal ?? "N/A";
+        economyFeeEl.textContent = economy ?? "N/A";
+
+        fastestUsdEl.textContent = feeToUsd(fastest, btcPriceUsd);
+        normalUsdEl.textContent = feeToUsd(normal, btcPriceUsd);
+        economyUsdEl.textContent = feeToUsd(economy, btcPriceUsd);
+
+        const date = parseDate(data);
+
+        freshnessTextEl.textContent = minutesAgo(date);
+        datetimeLineEl.textContent = formatUtcDate(date);
+
+        errorEl.style.display = "none";
+        setStatus(true);
+      }
+
+      async function loadFees() {
+        try {
+          const response = await fetch(API_URL, {
+            cache: "no-store"
+          });
+
+          if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+          }
+
+          const data = await response.json();
+          renderData(data);
+        } catch (error) {
+          console.error("BTCBench fee widget error:", error);
+          errorEl.style.display = "block";
+          freshnessTextEl.textContent = "Unable to refresh BTCBench data";
+          datetimeLineEl.textContent = "Please check the BTCBench API or status page.";
+          setStatus(false);
+        }
+      }
+
+      loadFees();
+
+      window.setInterval(function () {
+        if (document.visibilityState === "visible") {
+          loadFees();
+        }
+      }, REFRESH_MS);
+    })();
+  </script>
 </body>
 </html>
