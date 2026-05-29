@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BTCBench Simple Bitcoin Fee Card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8fafc;
+      padding: 24px;
+    }
+
+    .btcbench-card {
+      max-width: 360px;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      background: #ffffff;
+      padding: 18px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .btcbench-card h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .btcbench-card p {
+      margin: 8px 0;
+      color: #334155;
+    }
+
+    .fee-row {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #e2e8f0;
+      padding: 10px 0;
+      font-size: 16px;
+    }
+
+    .fee-value {
+      font-weight: bold;
+      color: #f7931a;
+    }
+
+    .source {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .source a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="btcbench-card">
+    <h2>Bitcoin Fee Estimates</h2>
+    <p>Latest BTC transaction fee data from BTCBench.</p>
+
+    <div class="fee-row">
+      <span>Fastest</span>
+      <span class="fee-value" id="fastest">Loading...</span>
+    </div>
+
+    <div class="fee-row">
+      <span>Normal</span>
+      <span class="fee-value" id="normal">Loading...</span>
+    </div>
+
+    <div class="fee-row">
+      <span>Economy</span>
+      <span class="fee-value" id="economy">Loading...</span>
+    </div>
+
+    <div class="source">
+      Data source:
+      <a href="https://www.btcbench.com/api-docs.html" target="_blank" rel="noopener noreferrer">
+        BTCBench Bitcoin Fee API
+      </a>
+    </div>
+  </div>
+
+  <script>
+    fetch("https://www.btcbench.com/api/v1/fees.json")
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        console.log("BTCBench API response:", data);
+
+        document.getElementById("fastest").textContent =
+          (data.fastest || data.fastestFee || data.fastest_fee || "N/A") + " sat/vB";
+
+        document.getElementById("normal").textContent =
+          (data.normal || data.halfHourFee || data.half_hour_fee || "N/A") + " sat/vB";
+
+        document.getElementById("economy").textContent =
+          (data.economy || data.hourFee || data.hour_fee || "N/A") + " sat/vB";
+      })
+      .catch(function(error) {
+        console.error("Error loading BTCBench fee data:", error);
+
+        document.getElementById("fastest").textContent = "Unavailable";
+        document.getElementById("normal").textContent = "Unavailable";
+        document.getElementById("economy").textContent = "Unavailable";
+      });
+  </script>
+
+</body>
+</html>
