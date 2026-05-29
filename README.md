@@ -2,13 +2,14 @@
 
 BTCBench provides free Bitcoin transaction fee data, charts, calculators, widgets, and report archives for developers and Bitcoin users.
 
-* Website: https://www.btcbench.com/
-* API Documentation: https://www.btcbench.com/api-docs.html
-* Fee Calculator: https://www.btcbench.com/calculator.html
-* Charts: https://www.btcbench.com/charts.html
-* Reports: https://www.btcbench.com/reports/
-* Methodology: https://www.btcbench.com/methodology.html
-* Disclaimer: https://www.btcbench.com/disclaimer.html
+- Website: https://www.btcbench.com/
+- API Documentation: https://www.btcbench.com/api-docs.html
+- Fee Calculator: https://www.btcbench.com/calculator.html
+- Tools: https://www.btcbench.com/tools.html
+- Charts: https://www.btcbench.com/charts.html
+- Reports: https://www.btcbench.com/reports/
+- Methodology: https://www.btcbench.com/methodology.html
+- Disclaimer: https://www.btcbench.com/disclaimer.html
 
 ## What is BTCBench?
 
