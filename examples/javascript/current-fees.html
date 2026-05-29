@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>BTCBench Current Bitcoin Fees Example</title>
+</head>
+<body>
+  <h1>BTCBench Current Bitcoin Fees</h1>
+
+  <p><strong>Fastest:</strong> <span id="fastest">Loading...</span></p>
+  <p><strong>Normal:</strong> <span id="normal">Loading...</span></p>
+  <p><strong>Economy:</strong> <span id="economy">Loading...</span></p>
+
+  <p>
+    Data source:
+    <a href="https://www.btcbench.com/api-docs.html" target="_blank" rel="noopener noreferrer">
+      BTCBench Bitcoin Fee API
+    </a>
+  </p>
+
+  <script>
+    fetch("https://www.btcbench.com/api/v1/fees.json")
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+
+        document.getElementById("fastest").textContent =
+          JSON.stringify(data.fastest ?? data.fastestFee ?? "Check API response");
+
+        document.getElementById("normal").textContent =
+          JSON.stringify(data.normal ?? data.halfHourFee ?? "Check API response");
+
+        document.getElementById("economy").textContent =
+          JSON.stringify(data.economy ?? data.hourFee ?? "Check API response");
+      })
+      .catch(error => {
+        document.body.innerHTML += "<p>Error loading BTCBench API data.</p>";
+        console.error(error);
+      });
+  </script>
+</body>
+</html>
