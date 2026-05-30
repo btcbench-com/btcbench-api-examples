@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>BTCBench API Examples | Bitcoin Fee API, Widgets & Developer Snippets</title>
-  <meta name="description" content="Developer examples for the BTCBench Bitcoin fee API. Use free JSON endpoints, JavaScript snippets, Python examples, PHP examples, and embeddable Bitcoin fee widgets.">
+  <meta name="description" content="Developer examples for the BTCBench Bitcoin fee API. Use free JSON endpoints, JavaScript snippets, Python examples, PHP examples, WordPress examples, and embeddable Bitcoin fee widgets.">
   <meta name="robots" content="index, follow">
 
   <link rel="canonical" href="https://btcbench-com.github.io/btcbench-api-examples/">
@@ -227,6 +228,14 @@
       font-weight: 800;
     }
 
+    .wide-card {
+      margin-top: 18px;
+      background:
+        linear-gradient(135deg, rgba(247, 147, 26, 0.10), rgba(79, 70, 229, 0.08)),
+        rgba(255, 255, 255, 0.96);
+      border-color: rgba(247, 147, 26, 0.28);
+    }
+
     .code-box {
       background: #0f172a;
       color: #e5e7eb;
@@ -307,6 +316,7 @@
       }
     }
   </style>
+
 </head>
 
 <body>
@@ -321,14 +331,17 @@
         <span>BTCBench API Examples</span>
       </a>
 
-      <nav class="nav-links" aria-label="Primary navigation">
-        <a href="https://www.btcbench.com/">BTCBench</a>
-        <a href="https://www.btcbench.com/api-docs.html">API Docs</a>
-        <a href="https://www.btcbench.com/tools.html">Tools</a>
-        <a href="https://www.btcbench.com/embed.html">Embed Widgets</a>
-        <a href="https://github.com/btcbench-com/btcbench-api-examples">GitHub Repo</a>
-      </nav>
-    </div>
+```
+  <nav class="nav-links" aria-label="Primary navigation">
+    <a href="https://www.btcbench.com/">BTCBench</a>
+    <a href="https://www.btcbench.com/api-docs.html">API Docs</a>
+    <a href="https://www.btcbench.com/tools.html">Tools</a>
+    <a href="https://www.btcbench.com/embed.html">Embed Widgets</a>
+    <a href="https://github.com/btcbench-com/btcbench-api-examples">GitHub Repo</a>
+  </nav>
+</div>
+```
+
   </header>
 
   <main>
@@ -336,134 +349,146 @@
       <div class="container">
         <div class="eyebrow">Free Bitcoin fee API examples</div>
 
-        <h1>Developer examples for Bitcoin fee data, widgets, and BTCBench tools.</h1>
+```
+    <h1>Developer examples for Bitcoin fee data, widgets, and BTCBench tools.</h1>
 
+    <p>
+      This repository provides simple public examples for using BTCBench Bitcoin fee data in dashboards,
+      websites, crypto blogs, education pages, newsletters, WordPress-style environments, and developer experiments.
+    </p>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://www.btcbench.com/api-docs.html">View BTCBench API Docs</a>
+      <a class="btn btn-secondary" href="https://www.btcbench.com/embed.html">Embed Bitcoin Fee Widgets</a>
+      <a class="btn btn-secondary" href="https://github.com/btcbench-com/btcbench-api-examples">Open on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Repository examples</h2>
+    <p class="section-subtitle">
+      Start with the example files below, then adapt them for your own site or internal tool.
+    </p>
+
+    <div class="grid">
+      <article class="card">
+        <h3>JavaScript example</h3>
+        <p>Fetch current Bitcoin fee data directly from a browser-based example.</p>
+        <a class="card-link" href="examples/javascript/current-fees.html">Open JavaScript example →</a>
+      </article>
+
+      <article class="card">
+        <h3>Python example</h3>
+        <p>Load BTCBench fee data with a small Python script for experiments and automation.</p>
+        <a class="card-link" href="examples/python/current-fees.py">Open Python example →</a>
+      </article>
+
+      <article class="card">
+        <h3>PHP example</h3>
+        <p>Fetch current BTCBench fee data using PHP for server-side websites or WordPress-style environments.</p>
+        <a class="card-link" href="examples/php/current-fees.php">Open PHP example →</a>
+      </article>
+
+      <article class="card">
+        <h3>Widget example</h3>
+        <p>Display a compact BTCBench-style Bitcoin fee card with sat/vB values and approximate USD cost.</p>
+        <a class="card-link" href="widgets/simple-fee-card.html">Open widget example →</a>
+      </article>
+    </div>
+
+    <div class="card wide-card">
+      <h3>WordPress shortcode example</h3>
+      <p>
+        Use the WordPress shortcode example to display BTCBench fee data inside posts, pages, sidebar widgets,
+        or a small custom plugin.
+      </p>
+      <a class="card-link" href="examples/wordpress/shortcode-example.php">Open WordPress shortcode example →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Quick API example</h2>
+    <p class="section-subtitle">
+      BTCBench publishes public Bitcoin fee endpoints that can be used for lightweight integrations.
+      Always verify fee recommendations in your own wallet before sending transactions.
+    </p>
+
+    <div class="code-box">
+      <pre><code>fetch("https://www.btcbench.com/api/v1/fees.json")
+```
+
+.then(response => response.json())
+.then(data => {
+console.log("BTCBench fee data:", data);
+})
+.catch(error => {
+console.error("Error loading BTCBench data:", error);
+});</code></pre> </div> </div> </section>
+
+```
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">BTCBench tools and resources</h2>
+    <p class="section-subtitle">
+      These public BTCBench pages provide calculators, charts, widgets, reports, and methodology notes.
+    </p>
+
+    <ul class="links-list">
+      <li><a href="https://www.btcbench.com/">BTCBench homepage</a></li>
+      <li><a href="https://www.btcbench.com/api-docs.html">Bitcoin Fee API documentation</a></li>
+      <li><a href="https://www.btcbench.com/tools.html">Bitcoin fee tools directory</a></li>
+      <li><a href="https://www.btcbench.com/embed.html">Embeddable Bitcoin fee widgets</a></li>
+      <li><a href="https://www.btcbench.com/calculator.html">Bitcoin fee calculator</a></li>
+      <li><a href="https://www.btcbench.com/forecast.html">Bitcoin fee forecast</a></li>
+      <li><a href="https://www.btcbench.com/send-now-or-wait.html">Send Bitcoin now or wait tool</a></li>
+      <li><a href="https://www.btcbench.com/stuck-bitcoin-transaction.html">Stuck Bitcoin transaction helper</a></li>
+      <li><a href="https://www.btcbench.com/charts.html">Bitcoin fee history charts</a></li>
+      <li><a href="https://www.btcbench.com/bitcoin-price-history-chart.html">Bitcoin price history chart</a></li>
+      <li><a href="https://www.btcbench.com/reports/">BTCBench report archive</a></li>
+      <li><a href="https://www.btcbench.com/data/ai-data-manifest.json">AI data manifest</a></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="grid two">
+      <article class="card">
+        <h2 class="section-title">Use cases</h2>
         <p>
-          This repository provides simple public examples for using BTCBench Bitcoin fee data in dashboards,
-          websites, crypto blogs, education pages, newsletters, WordPress-style environments, and developer experiments.
+          BTCBench examples can support Bitcoin fee dashboards, crypto resource pages,
+          wallet education pages, transaction cost widgets, newsletter tools, WordPress-style sites,
+          and internal monitoring.
         </p>
+      </article>
 
-        <div class="cta-row">
-          <a class="btn btn-primary" href="https://www.btcbench.com/api-docs.html">View BTCBench API Docs</a>
-          <a class="btn btn-secondary" href="https://www.btcbench.com/embed.html">Embed Bitcoin Fee Widgets</a>
-          <a class="btn btn-secondary" href="https://github.com/btcbench-com/btcbench-api-examples">Open on GitHub</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <h2 class="section-title">Repository examples</h2>
-        <p class="section-subtitle">
-          Start with the example files below, then adapt them for your own site or internal tool.
+      <article class="card">
+        <h2 class="section-title">Developer notes</h2>
+        <p>
+          This demo page intentionally keeps the implementation simple. It does not include private API keys,
+          analytics IDs, contact form endpoints, server paths, database details, cron schedules, or production deployment scripts.
         </p>
+      </article>
+    </div>
+  </div>
+</section>
 
-        <div class="grid">
-          <article class="card">
-            <h3>JavaScript example</h3>
-            <p>Fetch current Bitcoin fee data directly from a browser-based example.</p>
-            <a class="card-link" href="examples/javascript/current-fees.html">Open JavaScript example →</a>
-          </article>
+<section class="section">
+  <div class="container">
+    <div class="note">
+      <strong>Disclaimer:</strong> BTCBench data is provided for informational purposes only. Bitcoin network
+      fees can change quickly, and actual transaction costs depend on transaction size, inputs, outputs,
+      address type, wallet behavior, and current network conditions. Always verify fee recommendations in
+      your own wallet before sending Bitcoin.
+    </div>
+  </div>
+</section>
+```
 
-          <article class="card">
-            <h3>Python example</h3>
-            <p>Load BTCBench fee data with a small Python script for experiments and automation.</p>
-            <a class="card-link" href="examples/python/current-fees.py">Open Python example →</a>
-          </article>
-
-          <article class="card">
-            <h3>PHP example</h3>
-            <p>Fetch current BTCBench fee data using PHP for server-side websites or WordPress-style environments.</p>
-            <a class="card-link" href="examples/php/current-fees.php">Open PHP example →</a>
-          </article>
-
-          <article class="card">
-            <h3>Widget example</h3>
-            <p>Display a compact BTCBench-style Bitcoin fee card with sat/vB values and approximate USD cost.</p>
-            <a class="card-link" href="widgets/simple-fee-card.html">Open widget example →</a>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <h2 class="section-title">Quick API example</h2>
-        <p class="section-subtitle">
-          BTCBench publishes public Bitcoin fee endpoints that can be used for lightweight integrations.
-          Always verify fee recommendations in your own wallet before sending transactions.
-        </p>
-
-        <div class="code-box">
-          <pre><code>fetch("https://www.btcbench.com/api/v1/fees.json")
-  .then(response =&gt; response.json())
-  .then(data =&gt; {
-    console.log("BTCBench fee data:", data);
-  })
-  .catch(error =&gt; {
-    console.error("Error loading BTCBench data:", error);
-  });</code></pre>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <h2 class="section-title">BTCBench tools and resources</h2>
-        <p class="section-subtitle">
-          These public BTCBench pages provide calculators, charts, widgets, reports, and methodology notes.
-        </p>
-
-        <ul class="links-list">
-          <li><a href="https://www.btcbench.com/">BTCBench homepage</a></li>
-          <li><a href="https://www.btcbench.com/api-docs.html">Bitcoin Fee API documentation</a></li>
-          <li><a href="https://www.btcbench.com/tools.html">Bitcoin fee tools directory</a></li>
-          <li><a href="https://www.btcbench.com/embed.html">Embeddable Bitcoin fee widgets</a></li>
-          <li><a href="https://www.btcbench.com/calculator.html">Bitcoin fee calculator</a></li>
-          <li><a href="https://www.btcbench.com/forecast.html">Bitcoin fee forecast</a></li>
-          <li><a href="https://www.btcbench.com/send-now-or-wait.html">Send Bitcoin now or wait tool</a></li>
-          <li><a href="https://www.btcbench.com/stuck-bitcoin-transaction.html">Stuck Bitcoin transaction helper</a></li>
-          <li><a href="https://www.btcbench.com/charts.html">Bitcoin fee history charts</a></li>
-          <li><a href="https://www.btcbench.com/bitcoin-price-history-chart.html">Bitcoin price history chart</a></li>
-          <li><a href="https://www.btcbench.com/reports/">BTCBench report archive</a></li>
-          <li><a href="https://www.btcbench.com/data/ai-data-manifest.json">AI data manifest</a></li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div class="grid two">
-          <article class="card">
-            <h2 class="section-title">Use cases</h2>
-            <p>
-              BTCBench examples can support Bitcoin fee dashboards, crypto resource pages,
-              wallet education pages, transaction cost widgets, newsletter tools, WordPress-style sites,
-              and internal monitoring.
-            </p>
-          </article>
-
-          <article class="card">
-            <h2 class="section-title">Developer notes</h2>
-            <p>
-              This demo page intentionally keeps the implementation simple. It does not include private API keys,
-              analytics IDs, contact form endpoints, server paths, database details, cron schedules, or production deployment scripts.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div class="note">
-          <strong>Disclaimer:</strong> BTCBench data is provided for informational purposes only. Bitcoin network
-          fees can change quickly, and actual transaction costs depend on transaction size, inputs, outputs,
-          address type, wallet behavior, and current network conditions. Always verify fee recommendations in
-          your own wallet before sending Bitcoin.
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer>
