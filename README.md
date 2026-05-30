@@ -72,6 +72,8 @@ index.html
     current-fees.php
 /widgets
   simple-fee-card.html
+/wordpress
+shortcode-example.php
 
 ## Quick JavaScript example
 
@@ -123,6 +125,13 @@ echo "Fastest: " . $data['fees']['fastest'] . " sat/vB\n";
 echo "Normal: " . $data['fees']['halfHour'] . " sat/vB\n";
 echo "Economy: " . $data['fees']['economy'] . " sat/vB\n";
 ?>
+
+## WordPress Shortcode Example
+
+The `examples/wordpress/shortcode-example.php` file shows how to create a simple WordPress shortcode:
+
+```text
+[btcbench_fees]
 
 ## Widget examples
 
