@@ -196,10 +196,10 @@
     }
 
     .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
 
     .grid.two {
       grid-template-columns: repeat(2, 1fr);
@@ -285,12 +285,18 @@
       margin: 0 0 8px;
     }
 
-    @media (max-width: 860px) {
-      .grid,
-      .grid.two,
-      .links-list {
-        grid-template-columns: 1fr;
-      }
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .grid,
+  .grid.two,
+  .links-list {
+    grid-template-columns: 1fr;
+  }
 
       .hero {
         padding-top: 38px;
@@ -353,17 +359,23 @@
         </p>
 
         <div class="grid">
-          <article class="card">
-            <h3>JavaScript example</h3>
-            <p>Fetch current Bitcoin fee data directly from a browser-based example.</p>
-            <a class="card-link" href="examples/javascript/current-fees.html">Open JavaScript example →</a>
-          </article>
+<article class="card">
+  <h3>Python example</h3>
+  <p>Load BTCBench fee data with a small Python script for experiments and automation.</p>
+  <a class="card-link" href="examples/python/current-fees.py">Open Python example →</a>
+</article>
 
-          <article class="card">
-            <h3>Python example</h3>
-            <p>Load BTCBench fee data with a small Python script for experiments and automation.</p>
-            <a class="card-link" href="examples/python/current-fees.py">Open Python example →</a>
-          </article>
+<article class="card">
+  <h3>PHP example</h3>
+  <p>Fetch current BTCBench fee data using PHP for server-side websites or WordPress-style environments.</p>
+  <a class="card-link" href="examples/php/current-fees.php">Open PHP example →</a>
+</article>
+
+<article class="card">
+  <h3>Widget example</h3>
+  <p>Display a compact BTCBench-style Bitcoin fee card with sat/vB values and approximate USD cost.</p>
+  <a class="card-link" href="widgets/simple-fee-card.html">Open widget example →</a>
+</article>
 
           <article class="card">
             <h3>Widget example</h3>
