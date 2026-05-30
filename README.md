@@ -58,8 +58,9 @@ BTCBench provides public web pages and data resources for Bitcoin fee monitoring
 
 ## Repository structure
 
-```text
 README.md
+LICENSE
+index.html
 /docs
   endpoints.md
 /examples
@@ -67,9 +68,10 @@ README.md
     current-fees.html
   /python
     current-fees.py
+  /php
+    current-fees.php
 /widgets
   simple-fee-card.html
-```
 
 ## Quick JavaScript example
 
@@ -107,7 +109,20 @@ try:
 
 except requests.RequestException as error:
     print("Error loading BTCBench API data:", error)
-```
+
+## Quick PHP example
+
+```php
+<?php
+$apiUrl = 'https://www.btcbench.com/api/v1/fees.json';
+
+$response = file_get_contents($apiUrl);
+$data = json_decode($response, true);
+
+echo "Fastest: " . $data['fees']['fastest'] . " sat/vB\n";
+echo "Normal: " . $data['fees']['halfHour'] . " sat/vB\n";
+echo "Economy: " . $data['fees']['economy'] . " sat/vB\n";
+?>
 
 ## Widget examples
 
