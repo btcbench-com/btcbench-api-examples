@@ -272,13 +272,14 @@ https://www.btcbench.com/status.html
 
 This repository includes simple examples that use the BTCBench API:
 
-| File                                    | Purpose                                                              |
-| --------------------------------------- | -------------------------------------------------------------------- |
-| `examples/javascript/current-fees.html` | Browser-based JavaScript example                                     |
-| `examples/python/current-fees.py`       | Python request example                                               |
-| `examples/php/current-fees.php`         | PHP request example for server-side or WordPress-style environments  |
-| `widgets/simple-fee-card.html`          | Compact Bitcoin fee widget with sat/vB values and approximate USD cost |
-| `index.html`                            | GitHub Pages demo homepage                                           |
+| File                                      | Purpose                                                              |
+| ----------------------------------------- | -------------------------------------------------------------------- |
+| `examples/javascript/current-fees.html`   | Browser-based JavaScript example                                     |
+| `examples/python/current-fees.py`         | Python request example                                               |
+| `examples/php/current-fees.php`           | PHP request example for server-side or WordPress-style environments  |
+| `examples/wordpress/shortcode-example.php` | WordPress shortcode example for displaying BTCBench fee data         |
+| `widgets/simple-fee-card.html`            | Compact Bitcoin fee widget with sat/vB values and approximate USD cost |
+| `index.html`                              | GitHub Pages demo homepage                                           |
 
 ## BTCBench Tools and Resources
 
