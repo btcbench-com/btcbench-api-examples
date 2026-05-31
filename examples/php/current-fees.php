@@ -1,257 +1,260 @@
 <?php
 /**
- * BTCBench PHP Example
+ * BTCBench PHP Current Fees Example
+ * https://www.btcbench.com/
  *
- * Fetch current Bitcoin fee estimates from the public BTCBench API.
- *
- * API endpoint:
- * https://www.btcbench.com/api/v1/fees.json
- *
- * Full API documentation:
- * https://www.btcbench.com/api-docs.html
- *
- * This example is intentionally simple and does not include private API keys,
- * analytics IDs, server paths, credentials, or internal infrastructure details.
+ * Fetches current Bitcoin fee estimates from the public BTCBench API
+ * and displays them with approximate USD transaction cost.
  */
 
 declare(strict_types=1);
 
-$apiUrl = 'https://www.btcbench.com/api/v1/fees.json';
+// ─────────────────────────────────────────────
+//  Config
+// ─────────────────────────────────────────────
+
+const API_URL           = 'https://www.btcbench.com/api/v1/fees.json';
+const DEFAULT_TX_VBYTES = 140;
+
+// ─────────────────────────────────────────────
+//  Helpers
+// ─────────────────────────────────────────────
 
 /**
- * Fetch JSON data from the BTCBench API using cURL.
+ * Convert a sat/vB fee rate to an approximate USD cost
+ * based on a default transaction size.
  */
-function btcbench_fetch_json(string $url): array
+function fee_to_usd(mixed $fee_rate_sat_per_vb, mixed $btc_usd_price): string
 {
-    $ch = curl_init($url);
+    $fee   = filter_var($fee_rate_sat_per_vb, FILTER_VALIDATE_FLOAT);
+    $price = filter_var($btc_usd_price,       FILTER_VALIDATE_FLOAT);
 
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_TIMEOUT => 10,
-        CURLOPT_CONNECTTIMEOUT => 5,
-        CURLOPT_USERAGENT => 'BTCBench PHP Example/1.0',
+    if ($fee === false || $price === false) {
+        return '~$—';
+    }
+
+    $sats = $fee * DEFAULT_TX_VBYTES;
+    $usd  = ($sats / 100_000_000) * $price;
+
+    return '~$' . number_format($usd, 2);
+}
+
+
+/**
+ * Extract and parse the timestamp from the API response.
+ * Tries multiple known field names.
+ */
+function parse_date(array $data): ?DateTimeImmutable
+{
+    $raw = $data['datetime']
+        ?? $data['btc_price_fetched_at']
+        ?? $data['updated_at']
+        ?? $data['timestamp']
+        ?? null;
+
+    if ($raw === null) {
+        return null;
+    }
+
+    // Unix timestamp (integer or float)
+    if (is_numeric($raw)) {
+        $dt = DateTimeImmutable::createFromFormat(
+            'U',
+            (string)(int)$raw
+        );
+        return $dt !== false ? $dt->setTimezone(new DateTimeZone('UTC')) : null;
+    }
+
+    // String timestamp — normalise to ISO 8601
+    $raw_str = trim((string)$raw);
+
+    if (!str_contains($raw_str, 'T')) {
+        $raw_str = str_replace(' ', 'T', $raw_str);
+        if (!str_ends_with($raw_str, 'Z')) {
+            $raw_str .= 'Z';
+        }
+    }
+
+    try {
+        return new DateTimeImmutable($raw_str, new DateTimeZone('UTC'));
+    } catch (Exception) {
+        return null;
+    }
+}
+
+
+/**
+ * Format a DateTimeImmutable object as a readable UTC string.
+ */
+function format_utc_date(?DateTimeImmutable $date): string
+{
+    if ($date === null) {
+        return 'Latest BTCBench snapshot';
+    }
+
+    return $date->format('d M Y  H:i') . ' UTC';
+}
+
+
+/**
+ * Return a human-readable 'Updated X min ago' string.
+ */
+function minutes_ago(?DateTimeImmutable $date): string
+{
+    if ($date === null) {
+        return 'Updated recently';
+    }
+
+    $diff_seconds = (new DateTimeImmutable('now', new DateTimeZone('UTC')))
+        ->getTimestamp() - $date->getTimestamp();
+
+    $diff_min = max(0, (int)round($diff_seconds / 60));
+
+    if ($diff_min < 1)  return 'Updated just now';
+    if ($diff_min === 1) return 'Updated 1 min ago';
+    if ($diff_min < 60) return "Updated {$diff_min} min ago";
+
+    $diff_hours = (int)round($diff_min / 60);
+
+    if ($diff_hours === 1) return 'Updated 1 hour ago';
+
+    return "Updated {$diff_hours} hours ago";
+}
+
+
+// ─────────────────────────────────────────────
+//  Fetch
+// ─────────────────────────────────────────────
+
+/**
+ * Fetch fee data from the BTCBench public API.
+ * Returns parsed array or throws on failure.
+ *
+ * @throws RuntimeException
+ */
+function fetch_fees(): array
+{
+    $context = stream_context_create([
+        'http' => [
+            'method'          => 'GET',
+            'header'          => "User-Agent: BTCBench-PHP-Example/1.0\r\n",
+            'timeout'         => 10,
+            'ignore_errors'   => true,
+        ],
+        'ssl' => [
+            'verify_peer'       => true,
+            'verify_peer_name'  => true,
+        ],
     ]);
 
-    $responseBody = curl_exec($ch);
-    $curlError = curl_error($ch);
-    $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $raw = @file_get_contents(API_URL, false, $context);
 
-    curl_close($ch);
-
-    if ($responseBody === false) {
-        throw new RuntimeException('cURL error: ' . $curlError);
+    if ($raw === false) {
+        throw new RuntimeException('Request failed — could not reach BTCBench API.');
     }
 
-    if ($httpCode < 200 || $httpCode >= 300) {
-        throw new RuntimeException('BTCBench API returned HTTP status ' . $httpCode);
+    // Check HTTP status from response headers
+    $status_line = $http_response_header[0] ?? '';
+    preg_match('/HTTP\/\S+\s+(\d+)/', $status_line, $matches);
+    $status_code = (int)($matches[1] ?? 0);
+
+    if ($status_code !== 200) {
+        throw new RuntimeException("HTTP {$status_code}");
     }
 
-    $data = json_decode($responseBody, true);
+    $data = json_decode($raw, associative: true);
 
     if (!is_array($data)) {
-        throw new RuntimeException('Invalid JSON response from BTCBench API.');
+        throw new RuntimeException('Failed to decode BTCBench API JSON response.');
     }
 
     return $data;
 }
 
+
+// ─────────────────────────────────────────────
+//  Render
+// ─────────────────────────────────────────────
+
 /**
- * Safely read nested fee values from the BTCBench response.
+ * Validate and display the fee data in the terminal.
+ *
+ * @throws InvalidArgumentException
  */
-function btcbench_fee_value(array $data, string $key): string
+function render(array $data): void
 {
-    if (
-        isset($data['fees']) &&
-        is_array($data['fees']) &&
-        array_key_exists($key, $data['fees'])
-    ) {
-        return (string) $data['fees'][$key];
+    if (empty($data['fees'])) {
+        throw new InvalidArgumentException('Invalid BTCBench API response.');
     }
 
-    return 'N/A';
+    $fees          = $data['fees'];
+    $fastest       = $fees['fastest']  ?? 'N/A';
+    $normal        = $fees['halfHour'] ?? 'N/A';
+    $economy       = $fees['economy']  ?? 'N/A';
+    $btc_price_usd = $data['btc_price_usd'] ?? null;
+
+    $date = parse_date($data);
+
+    $div  = str_repeat('=', 44);
+    $line = str_repeat('-', 44);
+
+    echo PHP_EOL;
+    echo $div . PHP_EOL;
+    echo '  BTCBench — Current Bitcoin Fee Estimates'  . PHP_EOL;
+    echo $div . PHP_EOL;
+    echo sprintf(
+        "  %-12s %8s   %12s\n",
+        'Tier', 'sat/vB', 'USD ~140 vB'
+    );
+    echo $line . PHP_EOL;
+    echo sprintf(
+        "  %-12s %8s   %12s\n",
+        'Fastest',
+        (string)$fastest,
+        fee_to_usd($fastest, $btc_price_usd)
+    );
+    echo sprintf(
+        "  %-12s %8s   %12s\n",
+        'Normal',
+        (string)$normal,
+        fee_to_usd($normal, $btc_price_usd)
+    );
+    echo sprintf(
+        "  %-12s %8s   %12s\n",
+        'Economy',
+        (string)$economy,
+        fee_to_usd($economy, $btc_price_usd)
+    );
+    echo $line . PHP_EOL;
+    echo '  ' . minutes_ago($date)    . PHP_EOL;
+    echo '  ' . format_utc_date($date) . PHP_EOL;
+    echo $div . PHP_EOL;
+    echo '  Powered by BTCBench · https://www.btcbench.com' . PHP_EOL;
+    echo '  USD estimate assumes 140 vbyte transaction.'    . PHP_EOL;
+    echo '  Always verify fees in your own wallet.'         . PHP_EOL;
+    echo $div . PHP_EOL;
+    echo PHP_EOL;
 }
 
-/**
- * Escape output for safe HTML rendering.
- */
-function btcbench_escape(string $value): string
+
+// ─────────────────────────────────────────────
+//  Main
+// ─────────────────────────────────────────────
+
+function main(): void
 {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+    echo PHP_EOL . '  Fetching BTCBench fee data…' . PHP_EOL;
+
+    try {
+        $data = fetch_fees();
+        render($data);
+    } catch (Throwable $error) {
+        echo PHP_EOL;
+        echo '  [ERROR] Could not load BTCBench fee data: ' . $error->getMessage() . PHP_EOL;
+        echo '  Please check the BTCBench API or status page.' . PHP_EOL;
+        echo '  https://www.btcbench.com' . PHP_EOL;
+        echo PHP_EOL;
+    }
 }
 
-try {
-    $data = btcbench_fetch_json($apiUrl);
-
-    $fastest = btcbench_fee_value($data, 'fastest');
-    $normal = btcbench_fee_value($data, 'halfHour');
-    $hour = btcbench_fee_value($data, 'hour');
-    $economy = btcbench_fee_value($data, 'economy');
-
-    $datetime = isset($data['datetime']) ? (string) $data['datetime'] : 'Latest BTCBench snapshot';
-    $source = isset($data['source']) ? (string) $data['source'] : 'BTCBench public API';
-    $attribution = isset($data['attribution']) ? (string) $data['attribution'] : 'BTCBench is independent';
-
-} catch (Throwable $error) {
-    $fastest = 'N/A';
-    $normal = 'N/A';
-    $hour = 'N/A';
-    $economy = 'N/A';
-    $datetime = 'Unable to load BTCBench fee data';
-    $source = 'BTCBench public API';
-    $attribution = 'Data unavailable';
-    $errorMessage = $error->getMessage();
-}
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>BTCBench PHP Current Fees Example</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            margin: 0;
-            padding: 24px;
-            font-family: Arial, sans-serif;
-            background: #f8fafc;
-            color: #111827;
-            line-height: 1.6;
-        }
-
-        .card {
-            max-width: 560px;
-            margin: 0 auto;
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-        }
-
-        h1 {
-            margin: 0 0 8px;
-            font-size: 1.6rem;
-        }
-
-        .subtitle {
-            margin: 0 0 20px;
-            color: #6b7280;
-        }
-
-        .fee-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 16px;
-            padding: 12px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .fee-row:last-of-type {
-            border-bottom: none;
-        }
-
-        .fee-label {
-            font-weight: 700;
-        }
-
-        .fee-value {
-            color: #f7931a;
-            font-weight: 800;
-        }
-
-        .meta {
-            margin-top: 20px;
-            padding: 12px;
-            background: #fffbeb;
-            border: 1px solid #fde68a;
-            border-radius: 12px;
-            color: #78350f;
-            font-size: 0.92rem;
-        }
-
-        .error {
-            margin-top: 16px;
-            padding: 12px;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 12px;
-            color: #991b1b;
-            font-size: 0.92rem;
-        }
-
-        .links {
-            margin-top: 20px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .links a {
-            color: #4f46e5;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .links a:hover {
-            text-decoration: underline;
-        }
-
-        .disclaimer {
-            margin-top: 18px;
-            color: #6b7280;
-            font-size: 0.88rem;
-        }
-    </style>
-</head>
-<body>
-    <main class="card">
-        <h1>BTCBench Current Bitcoin Fees</h1>
-        <p class="subtitle">Simple PHP example using the public BTCBench Bitcoin fee API.</p>
-
-        <div class="fee-row">
-            <span class="fee-label">Fastest</span>
-            <span class="fee-value"><?php echo btcbench_escape($fastest); ?> sat/vB</span>
-        </div>
-
-        <div class="fee-row">
-            <span class="fee-label">Normal</span>
-            <span class="fee-value"><?php echo btcbench_escape($normal); ?> sat/vB</span>
-        </div>
-
-        <div class="fee-row">
-            <span class="fee-label">Hour</span>
-            <span class="fee-value"><?php echo btcbench_escape($hour); ?> sat/vB</span>
-        </div>
-
-        <div class="fee-row">
-            <span class="fee-label">Economy</span>
-            <span class="fee-value"><?php echo btcbench_escape($economy); ?> sat/vB</span>
-        </div>
-
-        <div class="meta">
-            <strong>Updated:</strong> <?php echo btcbench_escape($datetime); ?><br>
-            <strong>Source:</strong> <?php echo btcbench_escape($source); ?><br>
-            <strong>Attribution:</strong> <?php echo btcbench_escape($attribution); ?>
-        </div>
-
-        <?php if (isset($errorMessage)): ?>
-            <div class="error">
-                <strong>Error:</strong> <?php echo btcbench_escape($errorMessage); ?>
-            </div>
-        <?php endif; ?>
-
-        <div class="links">
-            <a href="https://www.btcbench.com/" target="_blank" rel="noopener noreferrer">BTCBench</a>
-            <a href="https://www.btcbench.com/api-docs.html" target="_blank" rel="noopener noreferrer">API Docs</a>
-            <a href="https://www.btcbench.com/tools.html" target="_blank" rel="noopener noreferrer">Tools</a>
-            <a href="https://www.btcbench.com/embed.html" target="_blank" rel="noopener noreferrer">Embed Widgets</a>
-        </div>
-
-        <p class="disclaimer">
-            BTCBench data is provided for informational purposes only. Bitcoin network fees can change quickly.
-            Always verify transaction fees in your own wallet before sending Bitcoin.
-        </p>
-    </main>
-</body>
-</html>
+main();
