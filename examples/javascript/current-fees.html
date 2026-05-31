@@ -1,42 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>BTCBench Current Bitcoin Fees Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simple JavaScript example for fetching current Bitcoin fee estimates from the public BTCBench API.">
 </head>
 <body>
   <h1>BTCBench Current Bitcoin Fees</h1>
 
-  <p><strong>Fastest:</strong> <span id="fastest">Loading...</span></p>
-  <p><strong>Normal:</strong> <span id="normal">Loading...</span></p>
-  <p><strong>Economy:</strong> <span id="economy">Loading...</span></p>
+  <p><strong>Fastest:</strong> <span id="fastest-fee">Loading...</span> sat/vB</p>
+  <p><strong>Normal:</strong> <span id="normal-fee">Loading...</span> sat/vB</p>
+  <p><strong>Economy:</strong> <span id="economy-fee">Loading...</span> sat/vB</p>
+  <p><strong>Updated:</strong> <span id="updated-time">Loading...</span></p>
 
   <p>
     Data source:
-    <a href="https://www.btcbench.com/api-docs.html" target="_blank" rel="noopener noreferrer">
+    <a href="https://www.btcbench.com/api-docs.html" target="_blank" rel="noopener">
       BTCBench Bitcoin Fee API
     </a>
   </p>
 
+  <p style="max-width: 720px;">
+    BTCBench data is provided for informational purposes only. Bitcoin network fees can change quickly.
+    Always verify the final fee recommendation inside your own wallet before sending Bitcoin.
+  </p>
+
   <script>
-    fetch("https://www.btcbench.com/api/v1/fees.json")
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
+    (function () {
+      "use strict";
 
-        document.getElementById("fastest").textContent =
-          JSON.stringify(data.fastest ?? data.fastestFee ?? "Check API response");
+      const API_URL = "https://www.btcbench.com/api/v1/fees.json";
 
-        document.getElementById("normal").textContent =
-          JSON.stringify(data.normal ?? data.halfHourFee ?? "Check API response");
+      const fastestEl = document.getElementById("fastest-fee");
+      const normalEl = document.getElementById("normal-fee");
+      const economyEl = document.getElementById("economy-fee");
+      const updatedEl = document.getElementById("updated-time");
 
-        document.getElementById("economy").textContent =
-          JSON.stringify(data.economy ?? data.hourFee ?? "Check API response");
-      })
-      .catch(error => {
-        document.body.innerHTML += "<p>Error loading BTCBench API data.</p>";
-        console.error(error);
-      });
+      function formatDate(value) {
+        if (!value) {
+          return "Latest BTCBench snapshot";
+        }
+
+        const raw = String(value).trim();
+        const normalized = raw.includes("T") ? raw : raw.replace(" ", "T") + "Z";
+        const date = new Date(normalized);
+
+        if (Number.isNaN(date.getTime())) {
+          return value;
+        }
+
+        return date.toLocaleString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZoneName: "short"
+        });
+      }
+
+      function showError(message) {
+        fastestEl.textContent = "N/A";
+        normalEl.textContent = "N/A";
+        economyEl.textContent = "N/A";
+        updatedEl.textContent = message;
+      }
+
+      fetch(API_URL, { cache: "no-store" })
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+          }
+
+          return response.json();
+        })
+        .then(function (data) {
+          if (!data || !data.fees) {
+            throw new Error("Invalid BTCBench API response");
+          }
+
+          fastestEl.textContent = data.fees.fastest ?? "N/A";
+          normalEl.textContent = data.fees.halfHour ?? "N/A";
+          economyEl.textContent = data.fees.economy ?? "N/A";
+          updatedEl.textContent = formatDate(data.datetime || data.updated_at || data.timestamp);
+        })
+        .catch(function (error) {
+          console.error("BTCBench API example error:", error);
+          showError("Unable to load BTCBench fee data.");
+        });
+    })();
   </script>
 </body>
 </html>
