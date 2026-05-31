@@ -1,339 +1,695 @@
 <?php
 /**
  * BTCBench WordPress Shortcode Example
+ * https://www.btcbench.com/
  *
- * Shortcode:
- * [btcbench_fees]
+ * Readable source example showing how to add a BTCBench fee widget
+ * to your WordPress site using a shortcode.
  *
- * Optional attributes:
- * [btcbench_fees title="Bitcoin Fees" show_source="yes"]
+ * HOW TO USE
+ * ──────────────────────────────────────────────────────────────────
+ * 1. Copy the code from the "SHORTCODE HANDLER" section below.
+ * 2. Paste it into your theme's functions.php file
+ *    OR into a custom plugin file.
+ * 3. Use the shortcode in any post, page or widget:
  *
- * This example fetches current Bitcoin fee estimates from the public
- * BTCBench API and displays them in a simple WordPress-friendly card.
+ *    [btcbench_fees]
  *
- * API endpoint:
- * https://www.btcbench.com/api/v1/fees.json
+ * 4. Optional attributes:
  *
- * Full API documentation:
- * https://www.btcbench.com/api-docs.html
+ *    [btcbench_fees title="Bitcoin Fees" vbytes="140" show_usd="true"]
  *
- * Important:
- * - This is an example snippet, not a full plugin.
- * - Add it to a small custom plugin or your child theme's functions.php.
- * - Avoid editing a parent theme's functions.php directly.
- * - BTCBench data is informational only. Always verify fees in your own wallet.
+ * ──────────────────────────────────────────────────────────────────
+ * NOTE: This file is a readable source reference only.
+ *       It is NOT intended to be executed directly.
+ *       Copy the relevant sections into WordPress as described above.
+ * ──────────────────────────────────────────────────────────────────
  */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+// =============================================================================
+//  SECTION 1 — SHORTCODE HANDLER
+//  Copy this entire section into your functions.php or custom plugin file.
+// =============================================================================
 
-/**
- * Register shortcode.
- */
-add_shortcode('btcbench_fees', 'btcbench_fees_shortcode');
+/*
 
-/**
- * Render BTCBench fee card.
- *
- * @param array $atts Shortcode attributes.
- * @return string
- */
-function btcbench_fees_shortcode($atts) {
+// ── 1a. Register the shortcode ────────────────────────────────────────────────
+
+add_shortcode( 'btcbench_fees', 'btcbench_fees_shortcode' );
+
+
+// ── 1b. Shortcode callback ────────────────────────────────────────────────────
+
+function btcbench_fees_shortcode( $atts ) {
+
+    // ── Default attributes ───────────────────────────────────────────────────
     $atts = shortcode_atts(
-        array(
-            'title'       => 'BTCBench Bitcoin Fees',
-            'show_source' => 'yes',
-        ),
+        [
+            'title'    => 'Current Bitcoin Fees',
+            'vbytes'   => 140,
+            'show_usd' => 'true',
+        ],
         $atts,
         'btcbench_fees'
     );
 
-    $cache_key = 'btcbench_current_fees';
-    $data = get_transient($cache_key);
+    $title    = sanitize_text_field( $atts['title'] );
+    $vbytes   = absint( $atts['vbytes'] );
+    $show_usd = filter_var( $atts['show_usd'], FILTER_VALIDATE_BOOLEAN );
 
-    if (false === $data) {
-        $response = wp_remote_get(
-            'https://www.btcbench.com/api/v1/fees.json',
-            array(
-                'timeout' => 10,
-                'headers' => array(
-                    'Accept'     => 'application/json',
-                    'User-Agent' => 'BTCBench WordPress Shortcode Example/1.0',
-                ),
-            )
-        );
+    // ── Enqueue styles and scripts ───────────────────────────────────────────
+    wp_enqueue_style(
+        'btcbench-fees',
+        get_template_directory_uri() . '/assets/css/btcbench-fees.css',
+        [],
+        '1.0.0'
+    );
 
-        if (is_wp_error($response)) {
-            return btcbench_fees_error_card(
-                'Unable to load BTCBench fee data right now.'
-            );
-        }
+    wp_enqueue_script(
+        'btcbench-fees',
+        get_template_directory_uri() . '/assets/js/btcbench-fees.js',
+        [],
+        '1.0.0',
+        true
+    );
 
-        $status_code = wp_remote_retrieve_response_code($response);
+    // ── Pass PHP config to JavaScript via wp_localize_script ─────────────────
+    wp_localize_script(
+        'btcbench-fees',
+        'BTCBenchConfig',
+        [
+            'apiUrl'   => 'https://www.btcbench.com/api/v1/fees.json',
+            'vbytes'   => $vbytes,
+            'showUsd'  => $show_usd,
+            'nonce'    => wp_create_nonce( 'btcbench_fees_nonce' ),
+        ]
+    );
 
-        if ($status_code < 200 || $status_code >= 300) {
-            return btcbench_fees_error_card(
-                'BTCBench API returned HTTP status ' . intval($status_code) . '.'
-            );
-        }
-
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
-
-        if (!is_array($data) || empty($data['fees']) || !is_array($data['fees'])) {
-            return btcbench_fees_error_card(
-                'Invalid BTCBench API response.'
-            );
-        }
-
-        /*
-         * Cache for 5 minutes.
-         * BTCBench public fee data is updated periodically,
-         * and caching avoids unnecessary repeated requests.
-         */
-        set_transient($cache_key, $data, 5 * MINUTE_IN_SECONDS);
-    }
-
-    $fees = isset($data['fees']) && is_array($data['fees']) ? $data['fees'] : array();
-
-    $fastest = btcbench_fees_get_value($fees, 'fastest');
-    $normal  = btcbench_fees_get_value($fees, 'halfHour');
-    $hour    = btcbench_fees_get_value($fees, 'hour');
-    $economy = btcbench_fees_get_value($fees, 'economy');
-
-    $datetime = !empty($data['datetime'])
-        ? sanitize_text_field((string) $data['datetime'])
-        : 'Latest BTCBench snapshot';
-
-    $source = !empty($data['source'])
-        ? sanitize_text_field((string) $data['source'])
-        : 'BTCBench public API';
-
-    $show_source = strtolower((string) $atts['show_source']) === 'yes';
-
+    // ── Build and return widget HTML ─────────────────────────────────────────
     ob_start();
     ?>
 
-```
-<div class="btcbench-fee-card">
-    <style>
-        .btcbench-fee-card {
-            max-width: 460px;
-            margin: 1.5rem 0;
-            padding: 0;
-            border: 1px solid #dbe3f5;
-            border-top: 4px solid #6366f1;
-            border-radius: 18px;
-            background: #ffffff;
-            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
-            overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            color: #111827;
-        }
+    <div class="btcbench-widget" id="btcbench-widget">
 
-        .btcbench-fee-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 14px 16px;
-            background: linear-gradient(180deg, #ffffff 0%, #f7f8ff 100%);
-            border-bottom: 1px solid #e5e7eb;
-        }
+        <div class="btcbench-header">
+            <div class="btcbench-brand">
+                <span class="btcbench-mark">B</span>
+                <span class="btcbench-name">BTCBench</span>
+            </div>
+            <div class="btcbench-title">
+                <?php echo esc_html( $title ); ?>
+            </div>
+            <div class="btcbench-status" id="btcbench-status">
+                <span class="btcbench-dot" aria-hidden="true"></span>
+                <span id="btcbench-status-text">Live</span>
+            </div>
+        </div>
 
-        .btcbench-fee-title {
-            margin: 0;
-            font-size: 1.05rem;
-            font-weight: 800;
-            line-height: 1.25;
-        }
+        <table class="btcbench-table" aria-label="Bitcoin fee estimates">
+            <thead>
+                <tr>
+                    <th scope="col">Tier</th>
+                    <th scope="col">sat/vB</th>
+                    <?php if ( $show_usd ) : ?>
+                        <th scope="col">~USD</th>
+                    <?php endif; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="btcbench-row btcbench-fastest">
+                    <td>
+                        <span class="btcbench-tier-name">Fastest</span>
+                        <span class="btcbench-tier-help">~10 min confirm</span>
+                    </td>
+                    <td>
+                        <span id="btcbench-fastest-fee">—</span>
+                    </td>
+                    <?php if ( $show_usd ) : ?>
+                        <td>
+                            <span id="btcbench-fastest-usd" class="btcbench-usd">~$—</span>
+                        </td>
+                    <?php endif; ?>
+                </tr>
+                <tr class="btcbench-row btcbench-normal">
+                    <td>
+                        <span class="btcbench-tier-name">Normal</span>
+                        <span class="btcbench-tier-help">~30 min confirm</span>
+                    </td>
+                    <td>
+                        <span id="btcbench-normal-fee">—</span>
+                    </td>
+                    <?php if ( $show_usd ) : ?>
+                        <td>
+                            <span id="btcbench-normal-usd" class="btcbench-usd">~$—</span>
+                        </td>
+                    <?php endif; ?>
+                </tr>
+                <tr class="btcbench-row btcbench-economy">
+                    <td>
+                        <span class="btcbench-tier-name">Economy</span>
+                        <span class="btcbench-tier-help">Low priority</span>
+                    </td>
+                    <td>
+                        <span id="btcbench-economy-fee">—</span>
+                    </td>
+                    <?php if ( $show_usd ) : ?>
+                        <td>
+                            <span id="btcbench-economy-usd" class="btcbench-usd">~$—</span>
+                        </td>
+                    <?php endif; ?>
+                </tr>
+            </tbody>
+        </table>
 
-        .btcbench-live-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            background: #d1fae5;
-            border: 1px solid #99f6e4;
-            color: #064e3b;
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
+        <div class="btcbench-footer">
+            <div class="btcbench-freshness">
+                <span class="btcbench-freshness-dot" aria-hidden="true"></span>
+                <span id="btcbench-freshness-text">Loading BTCBench data…</span>
+            </div>
+            <div class="btcbench-datetime" id="btcbench-datetime">—</div>
+            <div class="btcbench-powered">
+                Powered by
+                <a
+                    href="https://www.btcbench.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >BTCBench</a>
+                · Independent · Public Bitcoin fee data
+            </div>
+            <div class="btcbench-note">
+                USD estimate assumes <?php echo esc_html( $vbytes ); ?> vbyte transaction.
+                Always verify fees in your own wallet.
+            </div>
+            <div class="btcbench-error" id="btcbench-error" style="display:none;">
+                Could not load BTCBench fee data right now.
+            </div>
+        </div>
 
-        .btcbench-live-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #10b981;
-        }
-
-        .btcbench-fee-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            padding: 13px 16px;
-            border-bottom: 1px solid #eef2f7;
-        }
-
-        .btcbench-fee-row:last-of-type {
-            border-bottom: none;
-        }
-
-        .btcbench-fee-name {
-            font-size: 0.88rem;
-            font-weight: 800;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-        }
-
-        .btcbench-fee-help {
-            margin-top: 2px;
-            color: #9aa5b8;
-            font-size: 0.78rem;
-            font-weight: 600;
-        }
-
-        .btcbench-fee-value {
-            color: #f7931a;
-            font-size: 1.25rem;
-            font-weight: 900;
-            font-variant-numeric: tabular-nums;
-            white-space: nowrap;
-        }
-
-        .btcbench-fee-unit {
-            color: #6b7280;
-            font-size: 0.78rem;
-            font-weight: 700;
-            margin-left: 3px;
-        }
-
-        .btcbench-fee-footer {
-            padding: 12px 16px;
-            background: #f4f5ff;
-            border-top: 1px solid #dbe3f5;
-            color: #6b7280;
-            font-size: 0.82rem;
-            line-height: 1.5;
-        }
-
-        .btcbench-fee-footer a {
-            color: #4f46e5;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .btcbench-fee-footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
-
-    <div class="btcbench-fee-header">
-        <h3 class="btcbench-fee-title"><?php echo esc_html($atts['title']); ?></h3>
-        <span class="btcbench-live-pill">
-            <span class="btcbench-live-dot" aria-hidden="true"></span>
-            Live
-        </span>
     </div>
 
-    <div class="btcbench-fee-row">
-        <div>
-            <div class="btcbench-fee-name">Fastest</div>
-            <div class="btcbench-fee-help">Higher-priority estimate</div>
-        </div>
-        <div class="btcbench-fee-value">
-            <?php echo esc_html($fastest); ?><span class="btcbench-fee-unit">sat/vB</span>
-        </div>
-    </div>
-
-    <div class="btcbench-fee-row">
-        <div>
-            <div class="btcbench-fee-name">Normal</div>
-            <div class="btcbench-fee-help">Typical confirmation target</div>
-        </div>
-        <div class="btcbench-fee-value">
-            <?php echo esc_html($normal); ?><span class="btcbench-fee-unit">sat/vB</span>
-        </div>
-    </div>
-
-    <div class="btcbench-fee-row">
-        <div>
-            <div class="btcbench-fee-name">Hour</div>
-            <div class="btcbench-fee-help">Lower-priority estimate</div>
-        </div>
-        <div class="btcbench-fee-value">
-            <?php echo esc_html($hour); ?><span class="btcbench-fee-unit">sat/vB</span>
-        </div>
-    </div>
-
-    <div class="btcbench-fee-row">
-        <div>
-            <div class="btcbench-fee-name">Economy</div>
-            <div class="btcbench-fee-help">Lowest listed estimate</div>
-        </div>
-        <div class="btcbench-fee-value">
-            <?php echo esc_html($economy); ?><span class="btcbench-fee-unit">sat/vB</span>
-        </div>
-    </div>
-
-    <div class="btcbench-fee-footer">
-        <strong>Updated:</strong> <?php echo esc_html($datetime); ?><br>
-        <?php if ($show_source): ?>
-            <strong>Source:</strong> <?php echo esc_html($source); ?><br>
-        <?php endif; ?>
-        Powered by <a href="https://www.btcbench.com/" target="_blank" rel="noopener noreferrer">BTCBench</a>.
-        See <a href="https://www.btcbench.com/api-docs.html" target="_blank" rel="noopener noreferrer">API docs</a>
-        and <a href="https://www.btcbench.com/embed.html" target="_blank" rel="noopener noreferrer">embed widgets</a>.
-        <br>
-        <small>Informational estimate only. Always verify fees in your own wallet before sending Bitcoin.</small>
-    </div>
-</div>
-<?php
-
-return ob_get_clean();
-```
-
+    <?php
+    return ob_get_clean();
 }
 
-/**
+*/
 
-* Safely fetch a fee value from the fees array.
-*
-* @param array  $fees Fee object from BTCBench response.
-* @param string $key  Fee key.
-* @return string
-  */
-  function btcbench_fees_get_value(array $fees, string $key): string {
-  if (array_key_exists($key, $fees) && $fees[$key] !== null && $fees[$key] !== '') {
-  return (string) $fees[$key];
-  }
 
-  return 'N/A';
-  }
+// =============================================================================
+//  SECTION 2 — JAVASCRIPT
+//  Save as: /wp-content/themes/your-theme/assets/js/btcbench-fees.js
+// =============================================================================
 
-/**
+/*
 
-* Render a safe error card.
-*
-* @param string $message Error message.
-* @return string
-  */
-  function btcbench_fees_error_card(string $message): string {
-  ob_start();
-  ?>
+(function () {
+    "use strict";
 
-   <div class="btcbench-fee-card btcbench-fee-error" style="max-width:460px;margin:1.5rem 0;padding:16px;border:1px solid #fecaca;border-radius:14px;background:#fef2f2;color:#991b1b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">
-       <strong>BTCBench fee data unavailable.</strong><br>
-       <?php echo esc_html($message); ?><br>
-       <small>Please try again later or visit <a href="https://www.btcbench.com/" target="_blank" rel="noopener noreferrer" style="color:#991b1b;font-weight:700;">BTCBench</a>.</small>
-   </div>
-   <?php
+    const cfg         = window.BTCBenchConfig || {};
+    const API_URL     = cfg.apiUrl  || "https://www.btcbench.com/api/v1/fees.json";
+    const VBYTES      = cfg.vbytes  || 140;
+    const SHOW_USD    = cfg.showUsd !== false;
+    const REFRESH_MS  = 60000;
 
-  return ob_get_clean();
-  }
-  ?>
+    // ── Element references ───────────────────────────────────────────────────
+
+    const el = (id) => document.getElementById(id);
+
+    const fastestFeeEl    = el("btcbench-fastest-fee");
+    const normalFeeEl     = el("btcbench-normal-fee");
+    const economyFeeEl    = el("btcbench-economy-fee");
+
+    const fastestUsdEl    = el("btcbench-fastest-usd");
+    const normalUsdEl     = el("btcbench-normal-usd");
+    const economyUsdEl    = el("btcbench-economy-usd");
+
+    const freshnessTextEl = el("btcbench-freshness-text");
+    const datetimeLineEl  = el("btcbench-datetime");
+    const statusEl        = el("btcbench-status");
+    const statusTextEl    = el("btcbench-status-text");
+    const errorEl         = el("btcbench-error");
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    function setStatus(isOk) {
+        if (isOk) {
+            statusEl.classList.remove("error");
+            statusTextEl.textContent = "Live";
+        } else {
+            statusEl.classList.add("error");
+            statusTextEl.textContent = "Error";
+        }
+    }
+
+    function parseDate(data) {
+        const raw =
+            data.datetime             ||
+            data.btc_price_fetched_at ||
+            data.updated_at           ||
+            data.timestamp            ||
+            null;
+
+        if (!raw) return null;
+
+        if (typeof raw === "number") {
+            return new Date(raw * 1000);
+        }
+
+        const str        = String(raw).trim();
+        const normalized = str.includes("T")
+            ? str
+            : str.replace(" ", "T") + "Z";
+
+        const date = new Date(normalized);
+        return isNaN(date.getTime()) ? null : date;
+    }
+
+    function formatUtcDate(date) {
+        if (!date) return "Latest BTCBench snapshot";
+        return date.toLocaleString(undefined, {
+            timeZone:     "UTC",
+            year:         "numeric",
+            month:        "short",
+            day:          "2-digit",
+            hour:         "2-digit",
+            minute:       "2-digit",
+            timeZoneName: "short",
+        });
+    }
+
+    function minutesAgo(date) {
+        if (!date) return "Updated recently";
+
+        const diffMin = Math.max(0, Math.round((Date.now() - date.getTime()) / 60000));
+
+        if (diffMin < 1)  return "Updated just now";
+        if (diffMin === 1) return "Updated 1 min ago";
+        if (diffMin < 60) return "Updated " + diffMin + " min ago";
+
+        const diffHours = Math.round(diffMin / 60);
+        if (diffHours === 1) return "Updated 1 hour ago";
+        return "Updated " + diffHours + " hours ago";
+    }
+
+    function feeToUsd(feeRate, btcPrice) {
+        const fee   = Number(feeRate);
+        const price = Number(btcPrice);
+        if (!isFinite(fee) || !isFinite(price)) return "~$—";
+        const usd = ((fee * VBYTES) / 100_000_000) * price;
+        return "~$" + usd.toFixed(2);
+    }
+
+    // ── Render ───────────────────────────────────────────────────────────────
+
+    function renderData(data) {
+        if (!data || !data.fees) {
+            throw new Error("Invalid BTCBench API response");
+        }
+
+        const fastest  = data.fees.fastest;
+        const normal   = data.fees.halfHour;
+        const economy  = data.fees.economy;
+        const btcPrice = data.btc_price_usd;
+
+        fastestFeeEl.textContent = fastest ?? "N/A";
+        normalFeeEl.textContent  = normal  ?? "N/A";
+        economyFeeEl.textContent = economy ?? "N/A";
+
+        if (SHOW_USD && fastestUsdEl) {
+            fastestUsdEl.textContent = feeToUsd(fastest, btcPrice);
+            normalUsdEl.textContent  = feeToUsd(normal,  btcPrice);
+            economyUsdEl.textContent = feeToUsd(economy, btcPrice);
+        }
+
+        const date = parseDate(data);
+        freshnessTextEl.textContent = minutesAgo(date);
+        datetimeLineEl.textContent  = formatUtcDate(date);
+
+        errorEl.style.display = "none";
+        setStatus(true);
+    }
+
+    // ── Fetch ────────────────────────────────────────────────────────────────
+
+    async function loadFees() {
+        try {
+            const response = await fetch(API_URL, { cache: "no-store" });
+            if (!response.ok) throw new Error("HTTP " + response.status);
+            const data = await response.json();
+            renderData(data);
+        } catch (err) {
+            console.error("BTCBench shortcode error:", err);
+            errorEl.style.display       = "block";
+            freshnessTextEl.textContent = "Unable to refresh BTCBench data";
+            datetimeLineEl.textContent  = "Please check the BTCBench API or status page.";
+            setStatus(false);
+        }
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+
+    loadFees();
+
+    window.setInterval(function () {
+        if (document.visibilityState === "visible") loadFees();
+    }, REFRESH_MS);
+
+})();
+
+*/
+
+
+// =============================================================================
+//  SECTION 3 — CSS
+//  Save as: /wp-content/themes/your-theme/assets/css/btcbench-fees.css
+// =============================================================================
+
+/*
+
+.btcbench-widget {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    border: 1px solid #cbd7ff;
+    border-top: 4px solid #6366f1;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 16px 42px rgba(15, 23, 42, 0.10);
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.btcbench-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7f8ff 100%);
+    border-bottom: 1px solid #dbe3f5;
+}
+
+.btcbench-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btcbench-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 58%, #f7931a 100%);
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 900;
+    box-shadow: 0 8px 18px rgba(99, 102, 241, 0.35);
+}
+
+.btcbench-name {
+    font-size: 1.05rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: #111827;
+}
+
+.btcbench-title {
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #6b7280;
+    text-align: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid #b8c3ff;
+    background: #eef0ff;
+}
+
+.btcbench-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #d1fae5;
+    border: 1px solid #99f6e4;
+    color: #064e3b;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    justify-self: end;
+}
+
+.btcbench-status.error {
+    background: #fee2e2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.btcbench-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    animation: btcbench-pulse 2s infinite;
+}
+
+.btcbench-status.error .btcbench-dot {
+    background: #ef4444;
+    animation: none;
+}
+
+@keyframes btcbench-pulse {
+    0%, 100% { box-shadow: 0 0 0 0   rgba(16, 185, 129, 0.45); }
+    50%       { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);    }
+}
+
+.btcbench-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.btcbench-table thead tr {
+    background: #f8fafc;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.btcbench-table thead th {
+    padding: 10px 18px;
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9aa3b5;
+    text-align: left;
+}
+
+.btcbench-table thead th:not(:first-child) {
+    text-align: right;
+}
+
+.btcbench-row td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #eef2f7;
+    vertical-align: middle;
+}
+
+.btcbench-row:last-child td {
+    border-bottom: none;
+}
+
+.btcbench-tier-name {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 900;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.btcbench-fastest .btcbench-tier-name { color: #4f46e5; }
+.btcbench-normal  .btcbench-tier-name { color: #0e7490; }
+.btcbench-economy .btcbench-tier-name { color: #059669; }
+
+.btcbench-tier-help {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.76rem;
+    color: #9aa5b8;
+    font-weight: 700;
+}
+
+.btcbench-row td:not(:first-child) {
+    text-align: right;
+    font-size: 1.25rem;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+}
+
+.btcbench-fastest td:nth-child(2) { color: #dc2626; }
+.btcbench-normal  td:nth-child(2) { color: #f7931a; }
+.btcbench-economy td:nth-child(2) { color: #059669; }
+
+.btcbench-usd {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 8px;
+    background: #f4f6fb;
+    color: #6b7280;
+    font-size: 0.88rem;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+
+.btcbench-footer {
+    padding: 13px 18px 14px;
+    background: #f4f5ff;
+    border-top: 1px solid #dbe3f5;
+}
+
+.btcbench-freshness {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #4b5563;
+    font-size: 0.84rem;
+    font-weight: 900;
+    margin-bottom: 4px;
+}
+
+.btcbench-freshness-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    flex: 0 0 auto;
+}
+
+.btcbench-datetime {
+    color: #6b7280;
+    font-size: 0.78rem;
+    margin-bottom: 4px;
+}
+
+.btcbench-powered {
+    color: #9aa3b5;
+    font-size: 0.76rem;
+    line-height: 1.5;
+}
+
+.btcbench-powered a {
+    color: #7c86a2;
+    font-weight: 850;
+    text-decoration: none;
+}
+
+.btcbench-note {
+    margin-top: 4px;
+    color: #9aa3b5;
+    font-size: 0.74rem;
+}
+
+.btcbench-error {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+@media (max-width: 440px) {
+    .btcbench-header {
+        grid-template-columns: 1fr auto;
+        padding: 12px;
+    }
+    .btcbench-title {
+        display: none;
+    }
+    .btcbench-row td {
+        padding: 12px 14px;
+    }
+}
+
+*/
+
+
+// =============================================================================
+//  SECTION 4 — SHORTCODE USAGE REFERENCE
+// =============================================================================
+
+/*
+
+    Basic usage — place in any post, page or widget:
+
+    [btcbench_fees]
+
+
+    With optional attributes:
+
+    [btcbench_fees title="Bitcoin Fees"  vbytes="140"  show_usd="true"]
+    [btcbench_fees title="Fee Estimates" vbytes="250"  show_usd="true"]
+    [btcbench_fees title="BTC Fees"      vbytes="140"  show_usd="false"]
+
+
+    Attribute reference:
+
+    ┌─────────────┬───────────────────────────────┬─────────────┐
+    │ Attribute   │ Description                   │ Default     │
+    ├─────────────┼───────────────────────────────┼─────────────┤
+    │ title       │ Widget heading / pill label   │ Current     │
+    │             │                               │ Bitcoin     │
+    │             │                               │ Fees        │
+    ├─────────────┼───────────────────────────────┼─────────────┤
+    │ vbytes      │ Assumed transaction size for  │ 140         │
+    │             │ USD cost estimate             │             │
+    ├─────────────┼───────────────────────────────┼─────────────┤
+    │ show_usd    │ Show or hide the USD column   │ true        │
+    └─────────────┴───────────────────────────────┴─────────────┘
+
+*/
+
+
+// =============================================================================
+//  SECTION 5 — FILE PLACEMENT REFERENCE
+// =============================================================================
+
+/*
+
+    WordPress file structure for this integration:
+
+    your-wordpress-site/
+    └── wp-content/
+        └── themes/
+            └── your-theme/
+                ├── functions.php                  ← Paste Section 1 here
+                └── assets/
+                    ├── js/
+                    │   └── btcbench-fees.js       ← Paste Section 2 here
+                    └── css/
+                        └── btcbench-fees.css      ← Paste Section 3 here
+
+    ──────────────────────────────────────────────────────────────────
+    Alternatively — as a standalone plugin:
+
+    your-wordpress-site/
+    └── wp-content/
+        └── plugins/
+            └── btcbench-fees/
+                ├── btcbench-fees.php              ← Paste Section 1 here
+                ├── assets/
+                │   ├── js/
+                │   │   └── btcbench-fees.js       ← Paste Section 2 here
+                │   └── css/
+                │       └── btcbench-fees.css      ← Paste Section 3 here
+                └── readme.txt                     ← Optional readme
+
+*/
