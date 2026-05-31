@@ -171,6 +171,17 @@ BTCBench includes multiple public tools for Bitcoin users and website owners:
 - Bitcoin Price History Chart: https://www.btcbench.com/bitcoin-price-history-chart.html
 - Embed Bitcoin Fee Widgets: https://www.btcbench.com/embed.html
 
+## Live examples
+
+The source code is maintained in this GitHub repository. Live examples are also hosted directly on BTCBench.com:
+
+- JavaScript: https://www.btcbench.com/examples/javascript/current-fees.html
+- Python: https://www.btcbench.com/examples/python/current-fees.py
+- PHP: https://www.btcbench.com/examples/php/current-fees.php
+- WordPress shortcode: https://www.btcbench.com/examples/wordpress/shortcode-example.php
+- Simple fee-card widget: https://www.btcbench.com/widgets/simple-fee-card.html
+- Endpoint notes: https://www.btcbench.com/docs/endpoints.md
+
 ## Reports and machine-readable data
 
 BTCBench publishes report archives and machine-readable metadata intended to make Bitcoin fee history easier to inspect, cite, and reuse.
