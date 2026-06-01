@@ -227,8 +227,13 @@ Please keep contributions neutral, factual, and focused on public BTCBench resou
 
 ## Attribution & License
 
-This repository is released under the **MIT License**.
+The example code and widgets in this repository are free to use, copy, modify,
+and adapt for personal, educational, website, blog, dashboard, WordPress,
+and commercial purposes without prior approval from BTCBench.
 
-You may use, copy, modify, and adapt the example code in this repository, subject to the terms of the MIT License. See the `LICENSE` file for details.
+If you use or embed a BTCBench-branded widget or fee display, please keep
+a visible BTCBench attribution link where practical.
+
+See the full [License & Usage Terms](https://github.com/btcbench-com/btcbench-api-examples/blob/main/LICENSE) for details.
 
 If you use these examples on your site or in a blog post, a link back to [BTCBench.com](https://www.btcbench.com) is highly appreciated!
