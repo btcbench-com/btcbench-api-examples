@@ -5,6 +5,11 @@
  *
  * Fetches current Bitcoin fee estimates from the public BTCBench API
  * and displays them with approximate USD transaction cost.
+ *  
+ * Source : https://www.btcbench.com
+ * API    : https://www.btcbench.com/api-docs.html
+ * GitHub : https://github.com/btcbench-com/btcbench-api-examples
+ * Please keep this credit if you use or share this code.
  */
 
 declare(strict_types=1);
