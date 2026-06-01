@@ -1,7 +1,15 @@
 Copyright © BTCBench.
 
-This repository is provided for reference and educational purposes only.
+Permission is granted to use, copy, modify, and adapt the example code and widget examples in this repository for personal, educational, website, blog, dashboard, WordPress, and commercial implementation purposes.
 
-You may view the examples and copy small snippets for limited implementation reference.
+You may use these examples without prior approval from BTCBench.
 
-You may not redistribute, repackage, resell, publish modified versions of, or claim the BTCBench examples as your own without prior written permission.
+Attribution is appreciated but not required for basic API example code. If you use or embed a BTCBench-branded widget, fee-card, or visible BTCBench data display, please keep a visible BTCBench attribution link where practical.
+
+You may not:
+- claim BTCBench, BTCBench.com, or BTCBench-branded examples as your own original product;
+- use BTCBench trademarks, branding, or logos in a way that suggests endorsement, partnership, or affiliation;
+- sell, repackage, or redistribute this repository or substantially similar BTCBench-branded examples as a standalone product, template pack, plugin pack, or paid code bundle without permission;
+- remove safety, source, or informational disclaimers from BTCBench-branded examples in a misleading way.
+
+The examples are provided “as is,” without warranty of any kind. BTCBench data is for informational purposes only. Always verify Bitcoin transaction fees inside your own wallet before sending Bitcoin.
