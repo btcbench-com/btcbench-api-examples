@@ -1,8 +1,12 @@
 <?php
 /**
  * BTCBench WordPress Shortcode Example
- * https://www.btcbench.com/
- *
+  Source: https://www.btcbench.com
+  API:    https://www.btcbench.com/api-docs.html
+  GitHub: https://github.com/btcbench-com/btcbench-api-examples
+  Please keep this credit if you use or share this code.
+  -->
+
  * Readable source example showing how to add a BTCBench fee widget
  * to your WordPress site using a shortcode.
  *
