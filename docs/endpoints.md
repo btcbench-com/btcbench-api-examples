@@ -1,3 +1,10 @@
+<!-- 
+  BTCBench API Endpoint Reference
+  Source: https://www.btcbench.com
+  API:    https://www.btcbench.com/api-docs.html
+  GitHub: https://github.com/btcbench-com/btcbench-api-examples
+  Please keep this credit if you use or share this code.
+-->
 # BTCBench API Endpoints
 
 Public endpoint reference for the BTCBench Bitcoin fee API.
