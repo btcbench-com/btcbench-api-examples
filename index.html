@@ -1,50 +1,69 @@
 <!DOCTYPE html>
-
+<!--
+  BTCBench API Examples — GitHub Pages Index
+  Source: https://www.btcbench.com
+  API:    https://www.btcbench.com/api-docs.html
+  GitHub: https://github.com/btcbench-com/btcbench-api-examples
+  Please keep this credit if you use or share this code.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>BTCBench API Examples | Bitcoin Fee API, Widgets & Developer Snippets</title>
-  <meta name="description" content="Developer examples for the BTCBench Bitcoin fee API. Use free JSON endpoints, JavaScript snippets, Python examples, PHP examples, WordPress examples, and embeddable Bitcoin fee widgets.">
+  <title>BTCBench API Examples | Bitcoin Fee API, Widgets &amp; Developer Snippets</title>
+  <meta name="description" content="Developer examples for the free public BTCBench Bitcoin fee API. JavaScript, Python, PHP, WordPress shortcode snippets and embeddable Bitcoin fee widgets. No API key required.">
   <meta name="robots" content="index, follow">
 
   <link rel="canonical" href="https://btcbench-com.github.io/btcbench-api-examples/">
 
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="BTCBench API Examples">
-  <meta property="og:description" content="Free Bitcoin fee API examples, widgets, and developer snippets from BTCBench.">
-  <meta property="og:url" content="https://btcbench-com.github.io/btcbench-api-examples/">
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="BTCBench API Examples | Bitcoin Fee API &amp; Developer Snippets">
+  <meta property="og:description" content="Free Bitcoin fee API examples, widgets, and developer snippets from BTCBench. No API key required.">
+  <meta property="og:url"         content="https://btcbench-com.github.io/btcbench-api-examples/">
 
   <style>
+    /* ── Design tokens ── */
     :root {
-      --primary: #f7931a;
-      --primary-dark: #d97706;
-      --dark: #111827;
-      --muted: #6b7280;
-      --light: #f8fafc;
-      --white: #ffffff;
-      --border: #e5e7eb;
-      --blue: #4f46e5;
-      --green: #059669;
-      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-      --radius: 18px;
+      --orange:        #f7931a;
+      --orange-dark:   #e8830a;
+      --orange-soft:   #fff7ed;
+      --orange-border: #fed7aa;
+      --purple:        #4f46e5;
+      --purple-soft:   #eef0ff;
+      --purple-border: #b8c3ff;
+      --green:         #059669;
+      --green-soft:    #d1fae5;
+      --dark:          #111827;
+      --muted:         #6b7280;
+      --muted-light:   #9aa5b8;
+      --light:         #f8fafc;
+      --white:         #ffffff;
+      --border:        #e5e7eb;
+      --border-strong: #cbd7ff;
+      --shadow-sm:     0 4px 12px rgba(15, 23, 42, 0.06);
+      --shadow:        0 10px 30px rgba(15, 23, 42, 0.09);
+      --shadow-lg:     0 20px 48px rgba(15, 23, 42, 0.13);
+      --radius:        16px;
+      --radius-sm:     10px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       color: var(--dark);
-      background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+      background:
+        radial-gradient(circle at top left, rgba(99, 102, 241, 0.10), transparent 38%),
+        linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
       line-height: 1.6;
+      min-height: 100vh;
     }
 
     a {
-      color: var(--blue);
+      color: var(--purple);
       text-decoration: none;
     }
 
@@ -52,25 +71,39 @@
       text-decoration: underline;
     }
 
+    img { max-width: 100%; }
+
+    /* ── Top banner ── */
     .top-banner {
       background: #0f172a;
-      color: #e5e7eb;
-      font-size: 0.92rem;
-      padding: 12px 20px;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      padding: 10px 20px;
       text-align: center;
+      letter-spacing: 0.01em;
+      line-height: 1.5;
     }
 
     .top-banner strong {
       color: #fbbf24;
+      font-weight: 800;
     }
 
+    /* ── Layout ── */
     .container {
-      width: min(1120px, calc(100% - 32px));
+      width: min(1100px, calc(100% - 32px));
       margin: 0 auto;
     }
 
+    /* ── Header / Nav ── */
     header {
-      padding: 28px 0 18px;
+      padding: 22px 0 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     .nav {
@@ -84,33 +117,68 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 11px;
       color: var(--dark);
-      font-weight: 800;
-      font-size: 1.35rem;
+      font-weight: 900;
+      font-size: 1.18rem;
+      letter-spacing: -0.02em;
+      text-decoration: none;
     }
 
+    .brand:hover { text-decoration: none; }
+
     .brand-mark {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 55%, #f7931a 100%);
       display: grid;
       place-items: center;
-      color: white;
-      font-weight: 900;
-      box-shadow: var(--shadow);
+      color: var(--white);
+      font-size: 1.2rem;
+      font-weight: 950;
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+      flex: 0 0 auto;
     }
 
     .nav-links {
       display: flex;
-      gap: 16px;
+      gap: 6px;
       flex-wrap: wrap;
-      font-size: 0.95rem;
+      font-size: 0.86rem;
+      font-weight: 700;
     }
 
+    .nav-links a {
+      color: var(--muted);
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      background: var(--purple-soft);
+      color: var(--purple);
+      border-color: var(--purple-border);
+      text-decoration: none;
+    }
+
+    .nav-links a.github {
+      background: #f1f5f9;
+      border-color: var(--border);
+      color: var(--dark);
+    }
+
+    .nav-links a.github:hover {
+      background: var(--dark);
+      color: var(--white);
+      border-color: var(--dark);
+    }
+
+    /* ── Hero ── */
     .hero {
-      padding: 58px 0 42px;
+      padding: 72px 0 52px;
       text-align: center;
     }
 
@@ -118,60 +186,116 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #fff7ed;
+      background: var(--orange-soft);
       color: #9a3412;
-      border: 1px solid #fed7aa;
-      padding: 8px 14px;
+      border: 1px solid var(--orange-border);
+      padding: 7px 16px;
       border-radius: 999px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      margin-bottom: 18px;
+      font-weight: 800;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--orange);
     }
 
     h1 {
-      margin: 0 auto 18px;
-      max-width: 860px;
-      font-size: clamp(2.25rem, 6vw, 4.25rem);
-      line-height: 1.05;
+      margin: 0 auto 20px;
+      max-width: 820px;
+      font-size: clamp(2rem, 5.5vw, 3.75rem);
+      line-height: 1.08;
       letter-spacing: -0.04em;
+      color: var(--dark);
     }
 
-    .hero p {
-      max-width: 760px;
-      margin: 0 auto 26px;
+    h1 span {
+      background: linear-gradient(135deg, #f7931a, #d97706);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      max-width: 680px;
+      margin: 0 auto 32px;
       color: var(--muted);
-      font-size: 1.15rem;
+      font-size: 1.08rem;
+      line-height: 1.65;
     }
 
+    /* ── API pill ── */
+    .api-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #0f172a;
+      color: #86efac;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.84rem;
+      font-weight: 700;
+      margin-bottom: 32px;
+      letter-spacing: 0.01em;
+      box-shadow: var(--shadow);
+    }
+
+    .api-pill-label {
+      background: #166534;
+      color: #bbf7d0;
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ── CTA row ── */
     .cta-row {
       display: flex;
       justify-content: center;
-      gap: 14px;
+      gap: 12px;
       flex-wrap: wrap;
-      margin-top: 24px;
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 46px;
-      padding: 12px 18px;
+      gap: 7px;
+      min-height: 44px;
+      padding: 11px 22px;
       border-radius: 999px;
       font-weight: 800;
+      font-size: 0.9rem;
       border: 1px solid transparent;
-      transition: transform 0.16s ease, box-shadow 0.16s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      text-decoration: none;
+      letter-spacing: 0.01em;
     }
 
     .btn:hover {
-      transform: translateY(-1px);
-      text-decoration: none;
+      transform: translateY(-2px);
       box-shadow: var(--shadow);
+      text-decoration: none;
     }
 
     .btn-primary {
-      background: var(--primary);
+      background: var(--orange);
       color: #111827;
+      border-color: var(--orange);
+    }
+
+    .btn-primary:hover {
+      background: var(--orange-dark);
+      border-color: var(--orange-dark);
     }
 
     .btn-secondary {
@@ -180,331 +304,1166 @@
       border-color: var(--border);
     }
 
+    .btn-dark {
+      background: #0f172a;
+      color: var(--white);
+      border-color: #0f172a;
+    }
+
+    /* ── Sections ── */
     .section {
-      padding: 26px 0;
+      padding: 28px 0;
     }
 
-    .section-title {
-      margin: 0 0 14px;
-      font-size: 1.7rem;
-      letter-spacing: -0.02em;
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 10px;
     }
 
-    .section-subtitle {
-      margin: 0 0 24px;
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: var(--purple);
+      border-radius: 999px;
+    }
+
+    h2.section-title {
+      margin: 0 0 10px;
+      font-size: 1.85rem;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+
+    .section-sub {
+      margin: 0 0 26px;
       color: var(--muted);
-      max-width: 760px;
+      max-width: 680px;
+      font-size: 0.98rem;
     }
 
-    .grid {
+    /* ── Example file grid ── */
+    .example-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-    }
-
-    .grid.two {
       grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
     }
 
-    .card {
-      background: rgba(255, 255, 255, 0.94);
+    .example-card {
+      background: var(--white);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 22px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .example-card:hover {
+      transform: translateY(-2px);
       box-shadow: var(--shadow);
+      border-color: #cbd5e1;
     }
 
-    .card h3 {
-      margin: 0 0 10px;
-      font-size: 1.15rem;
+    .example-card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    .card p {
-      margin: 0 0 14px;
-      color: var(--muted);
+    .lang-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      flex: 0 0 auto;
     }
 
-    .card-link {
+    .lang-badge.js  { background: #fef9c3; color: #854d0e; }
+    .lang-badge.py  { background: #dbeafe; color: #1e40af; }
+    .lang-badge.php { background: #ede9fe; color: #5b21b6; }
+    .lang-badge.wp  { background: #dbeafe; color: #1e3a8a; }
+    .lang-badge.html { background: var(--green-soft); color: #065f46; }
+    .lang-badge.md  { background: #f1f5f9; color: #475569; }
+
+    .example-card h3 {
+      margin: 0;
+      font-size: 1.02rem;
       font-weight: 800;
+      letter-spacing: -0.01em;
     }
 
-    .wide-card {
-      margin-top: 18px;
-      background:
-        linear-gradient(135deg, rgba(247, 147, 26, 0.10), rgba(79, 70, 229, 0.08)),
-        rgba(255, 255, 255, 0.96);
-      border-color: rgba(247, 147, 26, 0.28);
+    .example-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.55;
+      flex: 1;
+    }
+
+    .example-card-path {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.76rem;
+      color: var(--muted-light);
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 9px;
+      display: inline-block;
+    }
+
+    .example-card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .card-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+      text-decoration: none;
+      transition: background 0.14s ease, color 0.14s ease, transform 0.14s ease;
+      letter-spacing: 0.02em;
+    }
+
+    .card-btn:hover {
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    .card-btn.preview {
+      background: var(--purple-soft);
+      border-color: var(--purple-border);
+      color: var(--purple);
+    }
+
+    .card-btn.preview:hover {
+      background: var(--purple);
+      color: var(--white);
+      border-color: var(--purple);
+    }
+
+    .card-btn.download {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: #111827;
+    }
+
+    .card-btn.download:hover {
+      background: var(--orange-dark);
+      border-color: var(--orange-dark);
+    }
+
+    .card-btn.gh {
+      background: #f1f5f9;
+      border-color: var(--border);
+      color: var(--dark);
+    }
+
+    .card-btn.gh:hover {
+      background: #0f172a;
+      color: var(--white);
+      border-color: #0f172a;
+    }
+
+    /* ── Code tabs ── */
+    .code-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: -1px;
+      flex-wrap: wrap;
+    }
+
+    .code-tab {
+      padding: 8px 16px;
+      border-radius: 10px 10px 0 0;
+      font-size: 0.80rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background: #1e293b;
+      color: #64748b;
+      border-bottom: none;
+      transition: background 0.14s ease, color 0.14s ease;
+      letter-spacing: 0.03em;
+    }
+
+    .code-tab.active {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    .code-tab:hover:not(.active) {
+      background: #1e293b;
+      color: #94a3b8;
     }
 
     .code-box {
       background: #0f172a;
-      color: #e5e7eb;
-      border-radius: var(--radius);
-      padding: 20px;
+      color: #e2e8f0;
+      border-radius: 0 var(--radius) var(--radius) var(--radius);
+      padding: 24px;
       overflow-x: auto;
       box-shadow: var(--shadow);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
     }
 
     pre {
       margin: 0;
-      white-space: pre-wrap;
-      word-break: break-word;
+      white-space: pre;
     }
 
     code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 0.92rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88rem;
+      line-height: 1.7;
     }
 
-    .links-list {
+    /* Syntax colours */
+    .t-comment  { color: #4b5563; font-style: italic; }
+    .t-keyword  { color: #c084fc; }
+    .t-string   { color: #86efac; }
+    .t-fn       { color: #60a5fa; }
+    .t-var      { color: #fb923c; }
+    .t-num      { color: #f9a8d4; }
+    .t-key      { color: #7dd3fc; }
+
+    .code-panel { display: none; }
+    .code-panel.active { display: block; }
+
+    /* ── Resource table ── */
+    .resource-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .resource-table thead tr {
+      background: #f8fafc;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .resource-table th {
+      padding: 12px 18px;
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: left;
+    }
+
+    .resource-table td {
+      padding: 13px 18px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.88rem;
+      vertical-align: middle;
+    }
+
+    .resource-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .resource-table tr:hover td {
+      background: #fafbff;
+    }
+
+    .resource-table td:first-child {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .resource-table td code {
+      font-size: 0.80rem;
+      color: #7c3aed;
+      background: #ede9fe;
+      padding: 3px 8px;
+      border-radius: 5px;
+    }
+
+    /* ── Tools grid ── */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .tool-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+      border-color: #cbd5e1;
+    }
+
+    .tool-card-name {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--dark);
+    }
+
+    .tool-card-name a {
+      color: var(--dark);
+      text-decoration: none;
+    }
+
+    .tool-card-name a:hover {
+      color: var(--purple);
+      text-decoration: underline;
+    }
+
+    .tool-card-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Use cases ── */
+    .use-cases {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .use-case {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--orange);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #374151;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ── Disclaimer / note box ── */
+    .note-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 4px solid #f59e0b;
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      color: #78350f;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .note-box strong {
+      font-weight: 900;
+    }
+
+    /* ── Safe integration ── */
+    .safe-list {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      padding: 0;
+      gap: 10px;
       list-style: none;
+      padding: 0;
       margin: 0;
     }
 
-    .links-list li {
+    .safe-list li {
       background: var(--white);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      font-size: 0.84rem;
+      color: #374151;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .safe-list li::before {
+      content: '✕';
+      font-size: 0.7rem;
+      font-weight: 900;
+      color: #dc2626;
+      background: #fee2e2;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 48px;
+      padding: 28px 0 32px;
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.6);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      font-size: 1rem;
+      color: var(--dark);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      text-decoration: none;
+    }
+
+    .footer-brand:hover { text-decoration: none; }
+
+    .footer-brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 55%, #f7931a 100%);
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      font-size: 0.95rem;
+      font-weight: 950;
+    }
+
+    .footer-left p {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 0.80rem;
+      line-height: 1.6;
+      max-width: 440px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.80rem;
+    }
+
+    .footer-links a {
+      color: var(--muted);
       font-weight: 700;
     }
 
-    .note {
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      border-radius: var(--radius);
-      padding: 18px 20px;
-      color: #78350f;
+    .footer-links a:hover {
+      color: var(--purple);
     }
 
-    footer {
-      margin-top: 36px;
-      padding: 28px 0;
-      color: var(--muted);
-      font-size: 0.92rem;
+    .footer-copy {
+      margin-top: 20px;
+      padding-top: 16px;
       border-top: 1px solid var(--border);
+      color: var(--muted-light);
+      font-size: 0.76rem;
     }
 
-    footer p {
-      margin: 0 0 8px;
-    }
-
-    @media (max-width: 1100px) {
-      .grid {
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .example-grid,
+      .tools-grid,
+      .use-cases {
         grid-template-columns: repeat(2, 1fr);
+      }
+
+      .safe-list {
+        grid-template-columns: 1fr;
       }
     }
 
-    @media (max-width: 860px) {
-      .grid,
-      .grid.two,
-      .links-list {
+    @media (max-width: 640px) {
+      .example-grid,
+      .tools-grid,
+      .use-cases,
+      .safe-list {
         grid-template-columns: 1fr;
       }
 
-      .hero {
-        padding-top: 38px;
+      header {
+        position: static;
       }
 
-      .nav {
-        align-items: flex-start;
+      .nav-links {
+        gap: 4px;
+        font-size: 0.80rem;
+      }
+
+      .hero {
+        padding: 44px 0 36px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .code-box {
+        border-radius: var(--radius);
+      }
+
+      .footer-inner {
+        flex-direction: column;
       }
     }
   </style>
-
 </head>
 
 <body>
+
+  <!-- ── Top banner ─────────────────────────────────────────────── -->
+
   <div class="top-banner">
-    <strong>Independent project:</strong> BTCBench is not affiliated with Bitcoin.org, mempool.space, CoinGecko, Yahoo Finance, exchanges, wallets, mining pools, or blockchain explorers. Data is for informational use only.
+    <strong>Independent project</strong> — BTCBench is not affiliated with Bitcoin.org, mempool.space,
+    CoinGecko, Yahoo Finance, exchanges, wallets, or blockchain explorers. Data is for informational use only.
   </div>
+
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
 
   <header>
     <div class="container nav">
-      <a class="brand" href="https://www.btcbench.com/">
-        <span class="brand-mark">B</span>
+      <a class="brand" href="https://www.btcbench.com/" aria-label="BTCBench home">
+        <span class="brand-mark" aria-hidden="true">B</span>
         <span>BTCBench API Examples</span>
       </a>
 
       <nav class="nav-links" aria-label="Primary navigation">
         <a href="https://www.btcbench.com/">BTCBench</a>
         <a href="https://www.btcbench.com/api-docs.html">API Docs</a>
-        <a href="https://www.btcbench.com/tools.html">Tools</a>
         <a href="https://www.btcbench.com/embed.html">Embed Widgets</a>
-        <a href="https://github.com/btcbench-com/btcbench-api-examples">GitHub Repo</a>
+        <a href="https://www.btcbench.com/tools.html">Tools</a>
+        <a href="https://github.com/btcbench-com/btcbench-api-examples" class="github"
+           target="_blank" rel="noopener noreferrer">GitHub Repo</a>
       </nav>
     </div>
   </header>
 
+
   <main>
-    <section class="hero">
+
+    <!-- ── Hero ───────────────────────────────────────────────────── -->
+
+    <section class="hero" aria-label="Introduction">
       <div class="container">
-        <div class="eyebrow">Free Bitcoin fee API examples</div>
 
-        <h1>Developer examples for Bitcoin fee data, widgets, and BTCBench tools.</h1>
+        <div class="eyebrow">
+          <span class="eyebrow-dot" aria-hidden="true"></span>
+          Free Public Bitcoin Fee API — No Key Required
+        </div>
 
-        <p>
-          This repository provides simple public examples for using BTCBench Bitcoin fee data in dashboards,
-          websites, crypto blogs, education pages, newsletters, WordPress-style environments, and developer experiments.
+        <h1>Bitcoin fee data, widgets and <span>developer examples</span></h1>
+
+        <p class="hero-sub">
+          Simple, copy-paste examples for using the free BTCBench Bitcoin fee API in dashboards,
+          crypto blogs, WordPress sites, newsletters, and developer experiments.
+          JavaScript, Python, PHP, and WordPress shortcode — all in one place.
         </p>
+
+        <div class="api-pill" aria-label="API endpoint">
+          <span class="api-pill-label">GET</span>
+          https://www.btcbench.com/api/v1/fees.json
+        </div>
 
         <div class="cta-row">
-          <a class="btn btn-primary" href="https://www.btcbench.com/api-docs.html">View BTCBench API Docs</a>
-          <a class="btn btn-secondary" href="https://www.btcbench.com/embed.html">Embed Bitcoin Fee Widgets</a>
-          <a class="btn btn-secondary" href="https://github.com/btcbench-com/btcbench-api-examples">Open on GitHub</a>
+          <a class="btn btn-primary" href="https://www.btcbench.com/api-docs.html">
+            View API Docs
+          </a>
+          <a class="btn btn-secondary" href="https://www.btcbench.com/embed.html">
+            Embed Widgets
+          </a>
+          <a class="btn btn-dark"
+             href="https://github.com/btcbench-com/btcbench-api-examples"
+             target="_blank" rel="noopener noreferrer">
+            Open on GitHub
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ── Example files ──────────────────────────────────────────── -->
+
+    <section class="section" aria-labelledby="examples-heading">
+      <div class="container">
+
+        <div class="section-label">Example files</div>
+        <h2 class="section-title" id="examples-heading">Current example files</h2>
+        <p class="section-sub">
+          Each file is standalone and designed to be opened, read, and copied without a build process.
+          Preview the live version on BTCBench.com or download the raw source directly from GitHub.
+        </p>
+
+        <div class="example-grid">
+
+          <!-- JavaScript -->
+          <article class="example-card">
+            <div class="example-card-top">
+              <span class="lang-badge js" aria-label="JavaScript">JS</span>
+              <h3>JavaScript Example</h3>
+            </div>
+            <p>Fetch and display current Bitcoin fee estimates directly in the browser. No dependencies required.</p>
+            <span class="example-card-path">examples/javascript/current-fees.html</span>
+            <div class="example-card-actions">
+              <a class="card-btn preview"
+                 href="https://www.btcbench.com/examples/javascript/current-fees.html"
+                 target="_blank" rel="noopener noreferrer">Preview</a>
+              <a class="card-btn download"
+                 href="https://raw.githubusercontent.com/btcbench-com/btcbench-api-examples/main/examples/javascript/current-fees.html"
+                 download>Download</a>
+              <a class="card-btn gh"
+                 href="https://github.com/btcbench-com/btcbench-api-examples/blob/main/examples/javascript/current-fees.html"
+                 target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+          </article>
+
+          <!-- Python -->
+          <article class="example-card">
+            <div class="example-card-top">
+              <span class="lang-badge py" aria-label="Python">PY</span>
+              <h3>Python Example</h3>
+            </div>
+            <p>Command-line script using the Python standard library only. No third-party packages needed.</p>
+            <span class="example-card-path">examples/python/current-fees.py</span>
+            <div class="example-card-actions">
+              <a class="card-btn preview"
+                 href="https://github.com/btcbench-com/btcbench-api-examples/blob/main/examples/python/current-fees.py"
+                 target="_blank" rel="noopener noreferrer">Preview</a>
+              <a class="card-btn download"
+                 href="https://raw.githubusercontent.com/btcbench-com/btcbench-api-examples/main/examples/python/current-fees.py"
+                 download>Download</a>
+              <a class="card-btn gh"
+                 href="https://github.com/btcbench-com/btcbench-api-examples/blob/main/examples/python/current-fees.py"
+                 target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+          </article>
+
+          <!-- PHP -->
+          <article class="example-card">
+            <div class="example-card-top">
+              <span class="lang-badge php" aria-label="PHP">PHP</span>
+              <h3>PHP Example</h3>
+            </div>
+            <p>Server-side PHP page that fetches and renders current Bitcoin fee estimates with USD cost estimates.</p>
+            <span class="example-card-path">examples/php/current-fees.php</span>
+            <div class="example-card-actions">
+              <a class="card-btn preview"
+                 href="https://www.btcbench.com/examples/php/current-fees.php"
+                 target="_blank" rel="noopener noreferrer">Preview</a>
+              <a class="card-btn download"
+                 href="https://raw.githubusercontent.com/btcbench-com/btcbench-api-examples/main/examples/php/current-fees.php"
+                 download>Download</a>
+              <a class="card-btn gh"
+                 href="https://github.com/btcbench-com/btcbench-api-examples/blob/main/examples/php/current-fees.php"
+                 target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+          </article>
+
+          <!-- WordPress -->
+          <article class="example-card">
+            <div class="example-card-top">
+              <span class="lang-badge wp" aria-label="WordPress">WP</span>
+              <h3>WordPress Shortcode</h3>
+            </div>
+            <p>Drop a fee widget into any post, page, or sidebar using a simple shortcode. Includes PHP, JS, and CSS.</p>
+            <span class="example-card-path">examples/wordpress/shortcode-example.php</span>
+            <div class="example-card-actions">
+              <a class="card-btn preview"
+                 href="https://www.btcbench.com/examples/wordpress/shortcode-example.php"
+                 target="_blank" rel="noopener noreferrer">Preview</a>
+              <a class="card-btn download"
+                 href="https://raw.githubusercontent.com/btcbench-com/btcbench-api-examples/main/examples/wordpress/shortcode-example.php"
+                 download>Download</a>
+              <a class="card-btn gh"
+                 href="https://github.com/btcbench-com/btcbench-api-examples/blob/main/examples/wordpress/shortcode-example.php"
+                 target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+          </article>
+
+          <!-- Widget -->
+          <article class="example-card">
+            <div class="example-card-top">
+              <span class="lang-badge html" aria-label="HTML widget">HTML</span>
+              <h3>Simple Fee Card Widget</h3>
+            </div>
+            <p>A compact, self-contained Bitcoin fee card widget. Drop it into any HTML page or iframe it into a blog.</p>
+            <span class="example-card-path">widgets/simple-fee-card.html</span>
+            <div class="example-card-actions">
+              <a class="card-btn preview"
+                 href="https://www.btcbench.com/widgets/simple-fee-card.html"
+                 target="_blank" rel="noopener noreferrer">Preview</a>
+              <a class="card-btn download"
+                 href="https://raw.githubusercontent.com/btcbench-com/btcbench-api-examples/main/widgets/simple-fee-card.html"
+                 download>Download</a>
+              <a class="card-btn gh"
+                 href="https://github.com/btcbench-com/btcbench-api-examples/blob/main/widgets/simple-fee-card.html"
+                 target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+          </article>
+
+          <!-- Docs -->
+          <article class="example-card">
+            <div class="example-card-top">
+              <span class="lang-badge md" aria-label="Markdown docs">MD</span>
+              <h3>Endpoint Reference</h3>
+            </div>
+            <p>Field-by-field notes on the BTCBench fee JSON response, CSV endpoint, and status endpoint.</p>
+            <span class="example-card-path">docs/endpoints.md</span>
+            <div class="example-card-actions">
+              <a class="card-btn preview"
+                 href="https://github.com/btcbench-com/btcbench-api-examples/blob/main/docs/endpoints.md"
+                 target="_blank" rel="noopener noreferrer">Preview</a>
+              <a class="card-btn download"
+                 href="https://raw.githubusercontent.com/btcbench-com/btcbench-api-examples/main/docs/endpoints.md"
+                 download>Download</a>
+              <a class="card-btn gh"
+                 href="https://github.com/btcbench-com/btcbench-api-examples/blob/main/docs/endpoints.md"
+                 target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+          </article>
+
         </div>
       </div>
     </section>
 
-    <section class="section">
+
+    <!-- ── Quick code examples ─────────────────────────────────────── -->
+
+    <section class="section" aria-labelledby="quickcode-heading">
       <div class="container">
-        <h2 class="section-title">Repository examples</h2>
-        <p class="section-subtitle">
-          Start with the example files below, then adapt them for your own site or internal tool.
+
+        <div class="section-label">Quick start</div>
+        <h2 class="section-title" id="quickcode-heading">Copy and paste to get started</h2>
+        <p class="section-sub">
+          These short snippets are enough to pull live Bitcoin fee data into your project.
+          Each full example file includes error handling, USD cost estimates, and a styled display.
         </p>
 
-        <div class="grid">
-          <article class="card">
-            <h3>JavaScript example</h3>
-            <p>Fetch current Bitcoin fee data directly from a browser-based example.</p>
-            <a class="card-link" href="https://www.btcbench.com/examples/javascript/current-fees.html">Open JavaScript example →</a>
-          </article>
-
-          <article class="card">
-            <h3>Python example</h3>
-            <p>Load BTCBench fee data with a small Python script for experiments and automation.</p>
-            <a class="card-link" href="examples/python/current-fees.py">Open Python example →</a>
-          </article>
-
-          <article class="card">
-            <h3>PHP example</h3>
-            <p>Fetch current BTCBench fee data using PHP for server-side websites or WordPress-style environments.</p>
-            <a class="card-link" href="https://www.btcbench.com/examples/php/current-fees.php">Open PHP example →</a>
-          </article>
-
-          <article class="card">
-            <h3>Widget example</h3>
-            <p>Display a compact BTCBench-style Bitcoin fee card with sat/vB values and approximate USD cost.</p>
-            <a class="card-link" href="https://www.btcbench.com/widgets/simple-fee-card.html">Open widget example →</a>
-          </article>
+        <div class="code-tabs" role="tablist" aria-label="Language examples">
+          <button class="code-tab active" role="tab" aria-selected="true"
+                  aria-controls="panel-js"  data-panel="panel-js">JavaScript</button>
+          <button class="code-tab"        role="tab" aria-selected="false"
+                  aria-controls="panel-py"  data-panel="panel-py">Python</button>
+          <button class="code-tab"        role="tab" aria-selected="false"
+                  aria-controls="panel-php" data-panel="panel-php">PHP</button>
         </div>
 
-        <div class="card wide-card">
-          <h3>WordPress shortcode example</h3>
-          <p>
-            Use the WordPress shortcode example to display BTCBench fee data inside posts, pages, sidebar widgets,
-            or a small custom plugin.
-          </p>
-          <a class="card-link" href="https://www.btcbench.com/examples/wordpress/shortcode-example.php">Open WordPress shortcode example →</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <h2 class="section-title">Quick API example</h2>
-        <p class="section-subtitle">
-          BTCBench publishes public Bitcoin fee endpoints that can be used for lightweight integrations.
-          Always verify fee recommendations in your own wallet before sending transactions.
-        </p>
-
-        <div class="code-box">
-          <pre><code>fetch("https://www.btcbench.com/api/v1/fees.json")
-  .then(response => response.json())
-  .then(data => {
-    console.log("BTCBench fee data:", data);
+        <!-- JavaScript panel -->
+        <div class="code-box" id="panel-js" role="tabpanel" aria-label="JavaScript example">
+          <div class="code-panel active">
+<pre><code><span class="t-comment">// Fetch current Bitcoin fee estimates from BTCBench</span>
+<span class="t-fn">fetch</span>(<span class="t-string">"https://www.btcbench.com/api/v1/fees.json"</span>)
+  .<span class="t-fn">then</span>(<span class="t-var">response</span> =&gt; <span class="t-var">response</span>.<span class="t-fn">json</span>())
+  .<span class="t-fn">then</span>(<span class="t-var">data</span> =&gt; {
+    <span class="t-keyword">const</span> <span class="t-var">fees</span> = <span class="t-var">data</span>.<span class="t-key">fees</span>;
+    console.<span class="t-fn">log</span>(<span class="t-string">"Fastest: "</span>,  <span class="t-var">fees</span>.<span class="t-key">fastest</span>,  <span class="t-string">"sat/vB"</span>);
+    console.<span class="t-fn">log</span>(<span class="t-string">"Normal:  "</span>,  <span class="t-var">fees</span>.<span class="t-key">halfHour</span>, <span class="t-string">"sat/vB"</span>);
+    console.<span class="t-fn">log</span>(<span class="t-string">"Economy: "</span>,  <span class="t-var">fees</span>.<span class="t-key">economy</span>,  <span class="t-string">"sat/vB"</span>);
+    console.<span class="t-fn">log</span>(<span class="t-string">"BTC/USD: $"</span>, <span class="t-var">data</span>.<span class="t-key">btc_price_usd</span>);
   })
-  .catch(error => {
-    console.error("Error loading BTCBench data:", error);
-  });</code></pre>
+  .<span class="t-fn">catch</span>(<span class="t-var">err</span> =&gt; console.<span class="t-fn">error</span>(<span class="t-string">"BTCBench error:"</span>, <span class="t-var">err</span>));
+
+<span class="t-comment">// Full example → examples/javascript/current-fees.html</span></code></pre>
+          </div>
         </div>
+
+        <!-- Python panel -->
+        <div class="code-box" id="panel-py" role="tabpanel" aria-label="Python example" style="display:none;">
+          <div class="code-panel active">
+<pre><code><span class="t-comment"># Fetch current Bitcoin fee estimates from BTCBench</span>
+<span class="t-comment"># Standard library only — no pip install required</span>
+<span class="t-keyword">import</span> urllib.request, json
+
+<span class="t-var">url</span>  = <span class="t-string">"https://www.btcbench.com/api/v1/fees.json"</span>
+
+<span class="t-keyword">with</span> urllib.request.<span class="t-fn">urlopen</span>(<span class="t-var">url</span>, timeout=<span class="t-num">10</span>) <span class="t-keyword">as</span> <span class="t-var">r</span>:
+    <span class="t-var">data</span> = json.<span class="t-fn">loads</span>(<span class="t-var">r</span>.<span class="t-fn">read</span>())
+
+<span class="t-var">fees</span> = <span class="t-var">data</span>[<span class="t-string">"fees"</span>]
+<span class="t-fn">print</span>(<span class="t-fn">f</span><span class="t-string">"Fastest:  {<span class="t-var">fees</span>['fastest']}  sat/vB"</span>)
+<span class="t-fn">print</span>(<span class="t-fn">f</span><span class="t-string">"Normal:   {<span class="t-var">fees</span>['halfHour']} sat/vB"</span>)
+<span class="t-fn">print</span>(<span class="t-fn">f</span><span class="t-string">"Economy:  {<span class="t-var">fees</span>['economy']}  sat/vB"</span>)
+<span class="t-fn">print</span>(<span class="t-fn">f</span><span class="t-string">"BTC/USD:  ${<span class="t-var">data</span>['btc_price_usd']}"</span>)
+
+<span class="t-comment"># Full example → examples/python/current-fees.py</span></code></pre>
+          </div>
+        </div>
+
+        <!-- PHP panel -->
+        <div class="code-box" id="panel-php" role="tabpanel" aria-label="PHP example" style="display:none;">
+          <div class="code-panel active">
+<pre><code><span class="t-comment">&lt;?php</span>
+<span class="t-comment">// Fetch current Bitcoin fee estimates from BTCBench</span>
+<span class="t-var">$url</span>  = <span class="t-string">'https://www.btcbench.com/api/v1/fees.json'</span>;
+<span class="t-var">$data</span> = json_<span class="t-fn">decode</span>(<span class="t-fn">file_get_contents</span>(<span class="t-var">$url</span>), <span class="t-keyword">true</span>);
+
+<span class="t-keyword">echo</span> <span class="t-string">"Fastest:  "</span> . <span class="t-var">$data</span>[<span class="t-string">'fees'</span>][<span class="t-string">'fastest'</span>]  . <span class="t-string">" sat/vB\n"</span>;
+<span class="t-keyword">echo</span> <span class="t-string">"Normal:   "</span> . <span class="t-var">$data</span>[<span class="t-string">'fees'</span>][<span class="t-string">'halfHour'</span>] . <span class="t-string">" sat/vB\n"</span>;
+<span class="t-keyword">echo</span> <span class="t-string">"Economy:  "</span> . <span class="t-var">$data</span>[<span class="t-string">'fees'</span>][<span class="t-string">'economy'</span>]  . <span class="t-string">" sat/vB\n"</span>;
+<span class="t-keyword">echo</span> <span class="t-string">"BTC/USD:  $"</span> . <span class="t-var">$data</span>[<span class="t-string">'btc_price_usd'</span>]         . <span class="t-string">"\n"</span>;
+
+<span class="t-comment">// Full example → examples/php/current-fees.php</span></code></pre>
+          </div>
+        </div>
+
       </div>
     </section>
 
-    <section class="section">
+
+    <!-- ── Public API resources ────────────────────────────────────── -->
+
+    <section class="section" aria-labelledby="resources-heading">
       <div class="container">
-        <h2 class="section-title">BTCBench tools and resources</h2>
-        <p class="section-subtitle">
-          These public BTCBench pages provide calculators, charts, widgets, reports, and methodology notes.
+
+        <div class="section-label">Public endpoints</div>
+        <h2 class="section-title" id="resources-heading">Public BTCBench resources</h2>
+        <p class="section-sub">
+          All endpoints below are free and public. No authentication or API key is required.
         </p>
 
-        <ul class="links-list">
-          <li><a href="https://www.btcbench.com/">BTCBench homepage</a></li>
-          <li><a href="https://www.btcbench.com/api-docs.html">Bitcoin Fee API documentation</a></li>
-          <li><a href="https://www.btcbench.com/tools.html">Bitcoin fee tools directory</a></li>
-          <li><a href="https://www.btcbench.com/embed.html">Embeddable Bitcoin fee widgets</a></li>
-          <li><a href="https://www.btcbench.com/calculator.html">Bitcoin fee calculator</a></li>
-          <li><a href="https://www.btcbench.com/forecast.html">Bitcoin fee forecast</a></li>
-          <li><a href="https://www.btcbench.com/send-now-or-wait.html">Send Bitcoin now or wait tool</a></li>
-          <li><a href="https://www.btcbench.com/stuck-bitcoin-transaction.html">Stuck Bitcoin transaction helper</a></li>
-          <li><a href="https://www.btcbench.com/charts.html">Bitcoin fee history charts</a></li>
-          <li><a href="https://www.btcbench.com/bitcoin-price-history-chart.html">Bitcoin price history chart</a></li>
-          <li><a href="https://www.btcbench.com/reports/">BTCBench report archive</a></li>
-          <li><a href="https://www.btcbench.com/data/ai-data-manifest.json">AI data manifest</a></li>
-        </ul>
+        <table class="resource-table">
+          <thead>
+            <tr>
+              <th>Resource</th>
+              <th>Endpoint / URL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Current fee data (JSON)</td>
+              <td><code>https://www.btcbench.com/api/v1/fees.json</code></td>
+            </tr>
+            <tr>
+              <td>Current fee data (CSV)</td>
+              <td><code>https://www.btcbench.com/api/v1/fees.csv</code></td>
+            </tr>
+            <tr>
+              <td>API status</td>
+              <td><code>https://www.btcbench.com/api/v1/status.json</code></td>
+            </tr>
+            <tr>
+              <td>AI data manifest</td>
+              <td><code>https://www.btcbench.com/data/ai-data-manifest.json</code></td>
+            </tr>
+            <tr>
+              <td>API documentation</td>
+              <td><a href="https://www.btcbench.com/api-docs.html">btcbench.com/api-docs.html</a></td>
+            </tr>
+            <tr>
+              <td>Embed widget page</td>
+              <td><a href="https://www.btcbench.com/embed.html">btcbench.com/embed.html</a></td>
+            </tr>
+            <tr>
+              <td>Daily fee reports</td>
+              <td><a href="https://www.btcbench.com/reports/daily-v2/">btcbench.com/reports/daily-v2/</a></td>
+            </tr>
+            <tr>
+              <td>Weekly fee reports</td>
+              <td><a href="https://www.btcbench.com/reports/weekly-v2/">btcbench.com/reports/weekly-v2/</a></td>
+            </tr>
+            <tr>
+              <td>Monthly fee reports</td>
+              <td><a href="https://www.btcbench.com/reports/monthly-v2/">btcbench.com/reports/monthly-v2/</a></td>
+            </tr>
+            <tr>
+              <td>Methodology notes</td>
+              <td><a href="https://www.btcbench.com/methodology.html">btcbench.com/methodology.html</a></td>
+            </tr>
+          </tbody>
+        </table>
+
       </div>
     </section>
 
-    <section class="section">
-      <div class="container">
-        <div class="grid two">
-          <article class="card">
-            <h2 class="section-title">Use cases</h2>
-            <p>
-              BTCBench examples can support Bitcoin fee dashboards, crypto resource pages,
-              wallet education pages, transaction cost widgets, newsletter tools, WordPress-style sites,
-              and internal monitoring.
-            </p>
-          </article>
 
-          <article class="card">
-            <h2 class="section-title">Developer notes</h2>
-            <p>
-              This demo page intentionally keeps the implementation simple. It does not include private API keys,
-              analytics IDs, contact form endpoints, server paths, database details, cron schedules, or production deployment scripts.
-            </p>
-          </article>
+    <!-- ── BTCBench tools ──────────────────────────────────────────── -->
+
+    <section class="section" aria-labelledby="tools-heading">
+      <div class="container">
+
+        <div class="section-label">BTCBench tools</div>
+        <h2 class="section-title" id="tools-heading">Public tools for Bitcoin users</h2>
+        <p class="section-sub">
+          All tools are free, public, and require no account or login.
+        </p>
+
+        <div class="tools-grid">
+          <div class="tool-card">
+            <div class="tool-card-name">
+              <a href="https://www.btcbench.com/calculator.html"
+                 target="_blank" rel="noopener noreferrer">Bitcoin Fee Calculator</a>
+            </div>
+            <div class="tool-card-desc">Estimate transaction cost in sat/vB and USD before you send.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-name">
+              <a href="https://www.btcbench.com/forecast.html"
+                 target="_blank" rel="noopener noreferrer">Bitcoin Fee Forecast</a>
+            </div>
+            <div class="tool-card-desc">Short-term fee outlook to help time your Bitcoin transactions.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-name">
+              <a href="https://www.btcbench.com/send-now-or-wait.html"
+                 target="_blank" rel="noopener noreferrer">Send Now or Wait?</a>
+            </div>
+            <div class="tool-card-desc">Decision tool based on current mempool conditions and fee trends.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-name">
+              <a href="https://www.btcbench.com/stuck-bitcoin-transaction.html"
+                 target="_blank" rel="noopener noreferrer">Stuck Transaction Helper</a>
+            </div>
+            <div class="tool-card-desc">Guidance for underpriced pending Bitcoin transactions.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-name">
+              <a href="https://www.btcbench.com/charts.html"
+                 target="_blank" rel="noopener noreferrer">Bitcoin Fee Charts</a>
+            </div>
+            <div class="tool-card-desc">Historical Bitcoin fee charts from BTCBench data.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-name">
+              <a href="https://www.btcbench.com/best-time-to-send-bitcoin.html"
+                 target="_blank" rel="noopener noreferrer">Best Time to Send Bitcoin</a>
+            </div>
+            <div class="tool-card-desc">Day and hour patterns for lower Bitcoin transaction fees.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-name">
+              <a href="https://www.btcbench.com/dca.html"
+                 target="_blank" rel="noopener noreferrer">Bitcoin DCA Calculator</a>
+            </div>
+            <div class="tool-card-desc">Dollar-cost averaging returns calculator for Bitcoin.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-name">
+              <a href="https://www.btcbench.com/bitcoin-price-history-chart.html"
+                 target="_blank" rel="noopener noreferrer">Bitcoin Price History Chart</a>
+            </div>
+            <div class="tool-card-desc">Long-term Bitcoin price chart with historical context.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-name">
+              <a href="https://www.btcbench.com/embed.html"
+                 target="_blank" rel="noopener noreferrer">Embed Bitcoin Fee Widgets</a>
+            </div>
+            <div class="tool-card-desc">Copy-paste iframe widgets for blogs, sites, and newsletters.</div>
+          </div>
         </div>
+
       </div>
     </section>
 
-    <section class="section">
+
+    <!-- ── Use cases ───────────────────────────────────────────────── -->
+
+    <section class="section" aria-labelledby="usecases-heading">
       <div class="container">
-        <div class="note">
-          <strong>Disclaimer:</strong> BTCBench data is provided for informational purposes only. Bitcoin network
-          fees can change quickly, and actual transaction costs depend on transaction size, inputs, outputs,
-          address type, wallet behavior, and current network conditions. Always verify fee recommendations in
-          your own wallet before sending Bitcoin.
+
+        <div class="section-label">Use cases</div>
+        <h2 class="section-title" id="usecases-heading">What can you build with this?</h2>
+        <p class="section-sub">
+          BTCBench fee data and examples are suitable for a wide range of projects.
+        </p>
+
+        <div class="use-cases">
+          <div class="use-case">Bitcoin fee dashboards</div>
+          <div class="use-case">Crypto blogs and education pages</div>
+          <div class="use-case">Wallet education and cost guides</div>
+          <div class="use-case">Transaction cost widgets</div>
+          <div class="use-case">Bitcoin newsletter resources</div>
+          <div class="use-case">WordPress sites and sidebars</div>
+          <div class="use-case">Fee-monitoring side projects</div>
+          <div class="use-case">Internal monitoring dashboards</div>
+          <div class="use-case">AI and citation-friendly references</div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ── Safe integration ────────────────────────────────────────── -->
+
+    <section class="section" aria-labelledby="safe-heading">
+      <div class="container">
+
+        <div class="section-label">Developer notes</div>
+        <h2 class="section-title" id="safe-heading">Safe integration notes</h2>
+        <p class="section-sub">
+          These examples are intentionally minimal and public-facing.
+          They do not contain and you should never commit any of the following
+          to a public repository:
+        </p>
+
+        <ul class="safe-list" aria-label="Things not included in these examples">
+          <li>Private API keys or tokens</li>
+          <li>Authentication secrets</li>
+          <li>Analytics IDs or tracking config</li>
+          <li>Contact form endpoints</li>
+          <li>Internal server paths</li>
+          <li>Database credentials</li>
+          <li>Cron job schedules</li>
+          <li>Production deployment scripts</li>
+        </ul>
+
+      </div>
+    </section>
+
+
+    <!-- ── Disclaimer ─────────────────────────────────────────────── -->
+
+    <section class="section" aria-labelledby="disclaimer-heading">
+      <div class="container">
+        <div class="note-box" role="note">
+          <strong>Disclaimer:</strong> BTCBench data is provided for informational purposes only.
+          Bitcoin network fees can change quickly. Actual transaction costs depend on transaction size,
+          inputs, outputs, address type, wallet behaviour, and current mempool conditions.
+          Always verify fee recommendations in your own wallet before sending a Bitcoin transaction.
+          Full disclaimer: <a href="https://www.btcbench.com/disclaimer.html"
+            target="_blank" rel="noopener noreferrer">btcbench.com/disclaimer.html</a>
         </div>
       </div>
     </section>
 
   </main>
 
+
+  <!-- ── Footer ─────────────────────────────────────────────────── -->
+
   <footer>
     <div class="container">
-      <p>
-        © 2026 BTCBench. BTCBench is an independent Bitcoin fee monitoring and benchmarking project.
-      </p>
-      <p>
-        Data and examples are provided for informational and developer-reference purposes only.
-        BTCBench is not affiliated with, endorsed by, or connected to Bitcoin.org, mempool.space,
-        CoinGecko, Yahoo Finance, cryptocurrency exchanges, wallets, mining pools, or blockchain explorers.
-        All trademarks and company names belong to their respective owners.
-      </p>
-      <p>
-        Repository: <a href="https://github.com/btcbench-com/btcbench-api-examples">btcbench-com/btcbench-api-examples</a>
-        · Website: <a href="https://www.btcbench.com/">BTCBench.com</a>
-        · API Docs: <a href="https://www.btcbench.com/api-docs.html">BTCBench API Docs</a>
-        · AI Data Manifest: <a href="https://www.btcbench.com/data/ai-data-manifest.json">AI Data Manifest</a>
-        · License: <a href="LICENSE">MIT</a>
+      <div class="footer-inner">
+
+        <div class="footer-left">
+          <a class="footer-brand" href="https://www.btcbench.com/" aria-label="BTCBench home">
+            <span class="footer-brand-mark" aria-hidden="true">B</span>
+            BTCBench
+          </a>
+          <p>
+            Independent Bitcoin fee monitoring and benchmarking.
+            Not affiliated with Bitcoin.org, mempool.space, CoinGecko,
+            Yahoo Finance, exchanges, wallets, or blockchain explorers.
+          </p>
+          <p>
+            Data and examples are for informational and developer-reference purposes only.
+            All trademarks belong to their respective owners.
+          </p>
+        </div>
+
+        <div class="footer-links" aria-label="Footer links">
+          <a href="https://www.btcbench.com/">BTCBench.com</a>
+          <a href="https://www.btcbench.com/api-docs.html">API Documentation</a>
+          <a href="https://www.btcbench.com/embed.html">Embed Widgets</a>
+          <a href="https://www.btcbench.com/tools.html">Tools Directory</a>
+          <a href="https://www.btcbench.com/methodology.html">Methodology</a>
+          <a href="https://www.btcbench.com/disclaimer.html">Disclaimer</a>
+          <a href="https://github.com/btcbench-com/btcbench-api-examples"
+             target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+          <a href="https://github.com/btcbench-com/btcbench-api-examples/blob/main/LICENSE"
+             target="_blank" rel="noopener noreferrer">MIT License</a>
+        </div>
+
+      </div>
+
+      <p class="footer-copy">
+        &copy; 2026 BTCBench &nbsp;·&nbsp;
+        <a href="https://github.com/btcbench-com/btcbench-api-examples"
+           target="_blank" rel="noopener noreferrer">btcbench-com/btcbench-api-examples</a>
+        &nbsp;·&nbsp;
+        <a href="https://www.btcbench.com/data/ai-data-manifest.json"
+           target="_blank" rel="noopener noreferrer">AI Data Manifest</a>
+        &nbsp;·&nbsp; Released under the MIT License
       </p>
     </div>
   </footer>
+
+
+  <!-- ── Tab switcher script ─────────────────────────────────────── -->
+
+  <script>
+    (function () {
+      "use strict";
+
+      const tabs   = document.querySelectorAll(".code-tab");
+      const panels = {
+        "panel-js":  document.getElementById("panel-js"),
+        "panel-py":  document.getElementById("panel-py"),
+        "panel-php": document.getElementById("panel-php"),
+      };
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+
+          // Deactivate all tabs
+          tabs.forEach(function (t) {
+            t.classList.remove("active");
+            t.setAttribute("aria-selected", "false");
+          });
+
+          // Hide all panels
+          Object.values(panels).forEach(function (p) {
+            if (p) p.style.display = "none";
+          });
+
+          // Activate clicked tab
+          tab.classList.add("active");
+          tab.setAttribute("aria-selected", "true");
+
+          // Show matching panel
+          const target = tab.getAttribute("data-panel");
+          if (panels[target]) {
+            panels[target].style.display = "block";
+          }
+        });
+      });
+    })();
+  </script>
+
 </body>
 </html>
